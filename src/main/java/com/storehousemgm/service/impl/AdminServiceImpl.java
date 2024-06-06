@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.storehousemgm.admin.entity.Admin;
+import com.storehousemgm.admin.enums.AdminType;
+import com.storehousemgm.admin.enums.Privilege;
 import com.storehousemgm.admin.service.AdminService;
-import com.storehousemgm.enums.AdminType;
-import com.storehousemgm.enums.Privilege;
 import com.storehousemgm.exception.IllegalOperationException;
 import com.storehousemgm.mapper.AdminMapper;
 import com.storehousemgm.repository.AdminRepository;
