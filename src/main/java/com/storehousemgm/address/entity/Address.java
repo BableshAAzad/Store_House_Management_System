@@ -1,4 +1,4 @@
-package com.storehousemgm.entity;
+package com.storehousemgm.address.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

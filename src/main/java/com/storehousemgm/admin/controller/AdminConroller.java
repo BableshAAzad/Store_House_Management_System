@@ -1,4 +1,4 @@
-package com.storehousemgm.controller;
+package com.storehousemgm.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.storehousemgm.entity.Admin;
+import com.storehousemgm.admin.entity.Admin;
+import com.storehousemgm.admin.service.AdminService;
 import com.storehousemgm.requestdto.AdminRequest;
 import com.storehousemgm.responsedto.AdminResponse;
-import com.storehousemgm.service.AdminService;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;

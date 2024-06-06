@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.storehousemgm.entity.Admin;
+import com.storehousemgm.admin.entity.Admin;
+import com.storehousemgm.admin.service.AdminService;
 import com.storehousemgm.enums.AdminType;
 import com.storehousemgm.enums.Privilege;
 import com.storehousemgm.exception.IllegalOperationException;
@@ -17,7 +18,6 @@ import com.storehousemgm.mapper.AdminMapper;
 import com.storehousemgm.repository.AdminRepository;
 import com.storehousemgm.requestdto.AdminRequest;
 import com.storehousemgm.responsedto.AdminResponse;
-import com.storehousemgm.service.AdminService;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
