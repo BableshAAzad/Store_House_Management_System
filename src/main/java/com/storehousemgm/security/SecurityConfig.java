@@ -14,12 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
       
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(12);
 	}
 	
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(csrf-> csrf.disable())
 				.authorizeHttpRequests(authorize-> authorize.requestMatchers("/api/v1/register")
 						.permitAll()
