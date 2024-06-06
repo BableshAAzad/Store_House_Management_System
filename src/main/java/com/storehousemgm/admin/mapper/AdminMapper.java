@@ -1,10 +1,10 @@
-package com.storehousemgm.mapper;
+package com.storehousemgm.admin.mapper;
 
 import org.springframework.stereotype.Component;
 
+import com.storehousemgm.admin.dto.requestdto.AdminRequest;
+import com.storehousemgm.admin.dto.responsedto.AdminResponse;
 import com.storehousemgm.admin.entity.Admin;
-import com.storehousemgm.requestdto.AdminRequest;
-import com.storehousemgm.responsedto.AdminResponse;
 
 @Component
 public class AdminMapper {

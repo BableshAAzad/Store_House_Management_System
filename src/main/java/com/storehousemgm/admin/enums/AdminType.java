@@ -1,4 +1,4 @@
-package com.storehousemgm.enums;
+package com.storehousemgm.admin.enums;
 
 import java.util.List;
 

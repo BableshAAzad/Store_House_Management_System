@@ -1,4 +1,4 @@
-package com.storehousemgm.requestdto;
+package com.storehousemgm.admin.dto.requestdto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

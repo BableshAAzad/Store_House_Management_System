@@ -1,4 +1,4 @@
-package com.storehousemgm.responsedto;
+package com.storehousemgm.admin.dto.responsedto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
