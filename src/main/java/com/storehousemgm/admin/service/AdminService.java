@@ -1,4 +1,4 @@
-package com.storehousemgm.service;
+package com.storehousemgm.admin.service;
 
 import org.springframework.http.ResponseEntity;
 

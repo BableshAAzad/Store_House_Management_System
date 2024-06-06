@@ -1,4 +1,4 @@
-package com.storehousemgm.entity;
+package com.storehousemgm.admin.entity;
 
 
 import com.storehousemgm.enums.AdminType;

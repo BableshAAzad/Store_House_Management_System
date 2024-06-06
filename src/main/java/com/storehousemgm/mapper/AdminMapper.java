@@ -2,7 +2,7 @@ package com.storehousemgm.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.storehousemgm.entity.Admin;
+import com.storehousemgm.admin.entity.Admin;
 import com.storehousemgm.requestdto.AdminRequest;
 import com.storehousemgm.responsedto.AdminResponse;
 
