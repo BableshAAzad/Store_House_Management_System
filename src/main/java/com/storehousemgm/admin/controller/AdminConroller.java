@@ -2,11 +2,7 @@ package com.storehousemgm.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.storehousemgm.admin.dto.requestdto.AdminRequest;
 import com.storehousemgm.admin.dto.responsedto.AdminResponse;
@@ -33,7 +29,9 @@ public class AdminConroller {
 		return adminService.addAdmin(adminRequest, storeHouseId);
 	}
 	
-//	@PostMapping("/demo")
-//	public 
+    @GetMapping("/demo")
+	public String demo(){
+		return "Hello Bablesh";
+	}
 
 }

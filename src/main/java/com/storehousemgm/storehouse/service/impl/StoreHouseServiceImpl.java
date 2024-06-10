@@ -28,10 +28,10 @@ public class StoreHouseServiceImpl implements StoreHouseService{
 	public ResponseEntity<ResponseStructure<StoreHouseResponse>> addStoreHouse(
 			@Valid StoreHouseRequest storeHouseRequest) {
 				StoreHouse storeHouse = storeHouseMapper.mapStoreHouseRequestToStoreHouse(storeHouseRequest, new StoreHouse());
-				storeHoseRepository.save(storeHouse);
-				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<StoreHouseResponse>()
+		StoreHouse savedStoreHouse = storeHoseRepository.save(storeHouse);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<StoreHouseResponse>()
 						.setStatus(HttpStatus.CREATED.value())
 						.setMessage("Store House Created")
-						.setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(storeHouse)));
+						.setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(savedStoreHouse)));
 	}
 }
