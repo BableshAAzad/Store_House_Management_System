@@ -11,6 +11,6 @@ public class StoreHouseRequest {
 	@NotNull(message = "StoreHouse name can not be null")
 	@NotBlank(message = "StoreHouse name can not be blank")
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only letters.")
-	private String storeHouseName;
+	private String name;
 
 }

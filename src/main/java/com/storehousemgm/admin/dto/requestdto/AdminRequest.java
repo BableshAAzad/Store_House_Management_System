@@ -14,8 +14,9 @@ public class AdminRequest {
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only letters.")
 	private String name;
 	
-	@Email(regexp = "[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,}", message = "invalid email ")
+//	@Email(regexp = "[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,}", message = "invalid email ")
 	@NotBlank(message = "Email can not be blank")
+	@Email(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "email should be contain suffix @gmail.com")
 	private String email;
 	
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must"

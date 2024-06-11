@@ -10,7 +10,7 @@ import com.storehousemgm.storehouse.entity.StoreHouse;
 public class StoreHouseMapper {
     
 	public StoreHouse mapStoreHouseRequestToStoreHouse(StoreHouseRequest storeHouseRequest, StoreHouse storeHouse) {
-		storeHouse.setName(storeHouseRequest.getStoreHouseName());
+		storeHouse.setName(storeHouseRequest.getName());
 		return storeHouse;
 	}
 	

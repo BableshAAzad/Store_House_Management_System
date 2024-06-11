@@ -1,7 +1,7 @@
 package com.storehousemgm.admin.entity;
 
 
-import com.storehousemgm.admin.enums.AdminType;
+import com.storehousemgm.enums.AdminType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
