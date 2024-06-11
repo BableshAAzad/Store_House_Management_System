@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1")
-public class AdminConroller {
+public class AdminController {
 	@Autowired
 	private AdminService adminService;
 
@@ -29,9 +29,17 @@ public class AdminConroller {
 		return adminService.addAdmin(adminRequest, storeHouseId);
 	}
 	
-    @GetMapping("/demo")
+    @PutMapping("/admins")
+	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(
+			@RequestBody @Valid AdminRequest adminRequest
+	){
+		return adminService.updateAdmin(adminRequest);
+	}
+
+
+	@GetMapping("/demo")
 	public String demo(){
-		return "Hello Bablesh";
+		return  "Hello Bablesh AAzad";
 	}
 
 }

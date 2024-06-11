@@ -25,7 +25,6 @@ public class StoreHouseController {
 	@PreAuthorize("hasAuthority('CREATE_STOREHOUSE')")
 	@PostMapping("/storehouses")
 	public ResponseEntity<ResponseStructure<StoreHouseResponse>> addStoreHouse(@RequestBody @Valid StoreHouseRequest storeHouseRequest) {
-		System.out.println(storeHouseRequest);
 		return storeHouseService.addStoreHouse(storeHouseRequest);
 	}
 

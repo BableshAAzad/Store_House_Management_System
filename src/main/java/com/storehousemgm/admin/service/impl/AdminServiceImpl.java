@@ -2,9 +2,13 @@ package com.storehousemgm.admin.service.impl;
 
 
 
+import com.storehousemgm.exception.AdminNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.storehousemgm.admin.dto.requestdto.AdminRequest;
@@ -20,6 +24,8 @@ import com.storehousemgm.storehouse.repository.StoreHoseRepository;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
+
+import java.util.Collection;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -62,6 +68,21 @@ public class AdminServiceImpl implements AdminService {
 					.setMessage("Admin Created")
 					.setData(adminMapper.mapAdminToAdminResponse(admin)));
 		}).orElseThrow(()-> new StoreHouseNotExistException("StoreHouseId : "+storeHouseId+", is not exist"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(AdminRequest adminRequest) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return adminRepository.findByEmail(email).map(admin->{
+			admin.setName(adminRequest.getName());
+			admin.setEmail(adminRequest.getEmail());
+			admin.setPassword(adminRequest.getPassword());
+			 Admin savedAdmin = adminRepository.save(admin);
+			 return  ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<AdminResponse>()
+					 .setStatus(HttpStatus.OK.value())
+					 .setMessage("Admin is updated")
+					 .setData(adminMapper.mapAdminToAdminResponse(savedAdmin)));
+		}).orElseThrow(()->new AdminNotFoundException("User not found in database"));
 	}
 
 }
