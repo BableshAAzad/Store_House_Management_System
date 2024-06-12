@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.storehousemgm.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,8 +12,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.storehousemgm.exception.IllegalOperationException;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
@@ -26,6 +25,27 @@ public class ApplicationExceptionHandler {
      public  ResponseEntity<ErrorStructure<String>> handleIllegalOperation(IllegalOperationException ex){
     	 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Already SUPER_ADMIN exist");
      }
+
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleStoreHouseNotExist(StoreHouseNotExistException ex){
+		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "StoreHouse not exist");
+	 }
+
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleAdminNotFound(AdminNotExistException ex){
+		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Admin not found in database");
+	 }
+
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleAdminAlreadyExist(AdminAlreadyExistException ex){
+		 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Admin already exist database");
+	 }
+
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleAddressNotExist(AddressNotExistException ex){
+		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Address is not exist");
+	 }
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(

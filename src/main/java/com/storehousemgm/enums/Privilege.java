@@ -1,4 +1,4 @@
-package com.storehousemgm.admin.enums;
+package com.storehousemgm.enums;
 
 public enum Privilege {
 	CREATE_ADMIN,

@@ -1,4 +1,4 @@
-package com.storehousemgm.storehouse.dto.storehouserequest;
+package com.storehousemgm.storehouse.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +11,6 @@ public class StoreHouseRequest {
 	@NotNull(message = "StoreHouse name can not be null")
 	@NotBlank(message = "StoreHouse name can not be blank")
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only letters.")
-	private String storeHouseName;
+	private String name;
 
 }

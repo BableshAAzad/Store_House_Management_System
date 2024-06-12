@@ -1,18 +1,13 @@
-package com.storehousemgm.address.entity;
+package com.storehousemgm.address.dto;
 
-import com.storehousemgm.storehouse.entity.StoreHouse;
-import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AddressResponse {
     private Long addressId;
     private String addressLine;
     private String city;
@@ -21,7 +16,4 @@ public class Address {
     private Integer pincode;
     private String longitude;
     private String latitude;
-
-    @OneToOne
-    private StoreHouse storeHouse;
 }
