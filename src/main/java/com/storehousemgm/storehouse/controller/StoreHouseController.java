@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.storehousemgm.storehouse.dto.storehouserequest.StoreHouseRequest;
-import com.storehousemgm.storehouse.dto.storehouseresponse.StoreHouseResponse;
+import com.storehousemgm.storehouse.dto.StoreHouseRequest;
+import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import com.storehousemgm.storehouse.service.StoreHouseService;
 import com.storehousemgm.utility.ResponseStructure;
 

@@ -24,6 +24,4 @@ public class StoreHouse {
 	@OneToOne
 	private Admin admin;
 
-	@OneToOne(mappedBy = "storeHouse")
-	private Address address;
 }

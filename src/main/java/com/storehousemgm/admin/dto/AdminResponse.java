@@ -1,4 +1,4 @@
-package com.storehousemgm.admin.dto.responsedto;
+package com.storehousemgm.admin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +15,4 @@ public class AdminResponse {
 	private Long adminId;
 	private String name;
 	private String email;
-//	private Boolean verified;
 }

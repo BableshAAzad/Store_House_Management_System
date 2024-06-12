@@ -2,8 +2,8 @@ package com.storehousemgm.storehouse.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.storehousemgm.storehouse.dto.storehouserequest.StoreHouseRequest;
-import com.storehousemgm.storehouse.dto.storehouseresponse.StoreHouseResponse;
+import com.storehousemgm.storehouse.dto.StoreHouseRequest;
+import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
