@@ -1,18 +1,23 @@
 package com.storehousemgm.address.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.storehousemgm.storehouse.entity.StoreHouse;
+import jakarta.persistence.*;
 
 abstract
 
-//@Entity
+@Entity
 public class Address {
-//    @Id
-//    private Long addressId;
-//    private String addressLine;
-//    private String city;
-//    private String state;
-//    private String country;
-//    private Integer pincode;
-//    private 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long addressId;
+    private String addressLine;
+    private String city;
+    private String state;
+    private String country;
+    private Integer pincode;
+    private String longitude;
+    private String latitude;
+
+    @OneToOne
+    private StoreHouse storeHouse;
 }

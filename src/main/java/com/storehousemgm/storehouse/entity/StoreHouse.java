@@ -1,5 +1,6 @@
 package com.storehousemgm.storehouse.entity;
 
+import com.storehousemgm.address.entity.Address;
 import com.storehousemgm.admin.entity.Admin;
 
 import jakarta.persistence.Entity;
@@ -19,6 +20,10 @@ public class StoreHouse {
 	private Long storeHouseId;
 	private String name;
 	private Long totalCapacity=0l;
+
 	@OneToOne
 	private Admin admin;
+
+	@OneToOne(mappedBy = "storeHouse")
+	private Address address;
 }
