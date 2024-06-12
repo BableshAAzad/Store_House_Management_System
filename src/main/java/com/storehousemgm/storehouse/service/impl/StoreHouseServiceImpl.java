@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.storehousemgm.storehouse.dto.storehouserequest.StoreHouseRequest;
-import com.storehousemgm.storehouse.dto.storehouseresponse.StoreHouseResponse;
+import com.storehousemgm.storehouse.dto.StoreHouseRequest;
+import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import com.storehousemgm.storehouse.entity.StoreHouse;
 import com.storehousemgm.storehouse.mapper.StoreHouseMapper;
-import com.storehousemgm.storehouse.repository.StoreHoseRepository;
+import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.storehouse.service.StoreHouseService;
 import com.storehousemgm.utility.ResponseStructure;
 
@@ -24,7 +24,7 @@ import java.util.List;
 public class StoreHouseServiceImpl implements StoreHouseService {
 
     @Autowired
-    private StoreHoseRepository storeHouseRepository;
+    private StoreHouseRepository storeHouseRepository;
 
     @Autowired
     private StoreHouseMapper storeHouseMapper;

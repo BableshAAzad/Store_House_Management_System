@@ -1,6 +1,4 @@
-package com.storehousemgm.storehouse.dto.storehouseresponse;
-
-import com.storehousemgm.admin.dto.responsedto.AdminResponse;
+package com.storehousemgm.storehouse.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +14,5 @@ import lombok.Setter;
 public class StoreHouseResponse {
     private Long storeHouseId;
     private String storeHoseName;
-    private Long totalCapacity=0l;
-    private AdminResponse adminResponse;
+    private Integer totalCapacity;
 }

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.storehousemgm.admin.dto.requestdto.AdminRequest;
-import com.storehousemgm.admin.dto.responsedto.AdminResponse;
+import com.storehousemgm.admin.dto.AdminRequest;
+import com.storehousemgm.admin.dto.AdminResponse;
 import com.storehousemgm.admin.entity.Admin;
 
 @Component
