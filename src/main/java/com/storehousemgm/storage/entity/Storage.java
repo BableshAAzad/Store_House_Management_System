@@ -5,6 +5,8 @@ import com.storehousemgm.storehouse.entity.StoreHouse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -17,12 +19,14 @@ public class Storage {
     private Long storageId;
     private String blockName;
     private String section;
-    private Integer capacityInArea;
-    private Integer capacityInWeight;
+    private Double capacityInWeight;
+    private Double lengthInMeters;
+    private Double breadthInMeters;
+    private Double heightInMeters;
     @Enumerated
-    private MaterialType materialType;
-    private Integer maxAdditionalWeight;
-    private Integer availableArea=0;
+    private List<MaterialType> materialTypes;
+    private Double maxAdditionalWeightInKg;
+    private Double availableArea;
     @ManyToOne
     private StoreHouse storeHouse;
 }

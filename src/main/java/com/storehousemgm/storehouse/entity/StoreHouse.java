@@ -18,12 +18,12 @@ public class StoreHouse {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long storeHouseId;
 	private String name;
-	private Integer totalCapacity=0;
+	private Double totalCapacity=0.0;
 
 	@OneToOne
 	private Admin admin;
 
-	@OneToMany
+	@OneToMany(mappedBy = "storeHouse")
 	private List<Storage> storages;
 
 }

@@ -46,6 +46,11 @@ public class ApplicationExceptionHandler {
 		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Address is not exist");
 	 }
 
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleStorageNotExist(StorageNotExistException ex){
+		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Storage is not exist");
+	 }
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(

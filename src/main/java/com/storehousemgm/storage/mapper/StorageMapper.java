@@ -9,12 +9,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class StorageMapper {
     public Storage mapStorageRequestToStorage(StorageRequest storageRequest, Storage storage){
-        Integer capacityInArea = storageRequest.getWidth() *storageRequest.getLength()*storageRequest.getBreadth();
+        Double capacityInArea = storageRequest.getHeightInMeters()
+                *storageRequest.getBreadthInMeters()
+                *storageRequest.getLengthInMeters();
+
         storage.setBlockName(storageRequest.getBlockName());
         storage.setSection(storageRequest.getSection());
-        storage.setCapacityInArea(capacityInArea);
-        storage.setCapacityInWeight(storageRequest.getCapacityInWeight());
-        storage.setMaterialType(storageRequest.getMaterialType());
+        storage.setCapacityInWeight(storageRequest.getCapacityWeightInKg());
+
+        storage.setLengthInMeters(storageRequest.getLengthInMeters());
+        storage.setBreadthInMeters(storageRequest.getBreadthInMeters());
+        storage.setHeightInMeters(storageRequest.getHeightInMeters());
+
+        storage.setMaterialTypes(storageRequest.getMaterialTypes());
+        storage.setMaxAdditionalWeightInKg(storageRequest.getCapacityWeightInKg());
+        storage.setAvailableArea(capacityInArea);
        return storage;
     }
     public StorageResponse mapStorageToStorageResponse(Storage storage){
@@ -22,10 +31,14 @@ public class StorageMapper {
                 .storageId(storage.getStorageId())
                 .blockName(storage.getBlockName())
                 .section(storage.getSection())
-                .capacityInArea(storage.getCapacityInArea())
                 .capacityInWeight(storage.getCapacityInWeight())
-                .materialType(storage.getMaterialType())
-                .maxAdditionalWeight(storage.getMaxAdditionalWeight())
+
+                .lengthInMeters(storage.getLengthInMeters())
+                .breadthInMeters(storage.getBreadthInMeters())
+                .heightInMeters(storage.getHeightInMeters())
+
+                .materialTypes(storage.getMaterialTypes())
+                .maxAdditionalWeightInKg(storage.getMaxAdditionalWeightInKg())
                 .availableArea(storage.getAvailableArea())
                 .build();
     }

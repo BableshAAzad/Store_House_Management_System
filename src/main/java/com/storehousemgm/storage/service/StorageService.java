@@ -7,5 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 public interface StorageService {
-    ResponseEntity<ResponseStructure<StorageResponse>> addStorage(@Valid StorageRequest storageRequest,@Valid Long storeHouseId);
+    ResponseEntity<ResponseStructure<String>> addStorage(
+            @Valid StorageRequest storageRequest, @Valid Long storeHouseId, @Valid Integer noOfStorageUnits);
+
+    ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
+            @Valid StorageRequest storageRequest, @Valid Long storageId);
 }
