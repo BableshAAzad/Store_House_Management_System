@@ -79,5 +79,29 @@ public class StorageServiceImpl implements StorageService {
         }).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
     }
     //--------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(Long storageId) {
+        return storageRepository.findById(storageId).map(storage->{
+            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<StorageResponse>()
+                    .setStatus(HttpStatus.FOUND.value())
+                    .setMessage("Storage Founded")
+                    .setData(storageMapper.mapStorageToStorageResponse(storage)));
+        }).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages() {
+        List<StorageResponse> listStorages = storageRepository
+                .findAll()
+                .stream()
+                .map(storageMapper::mapStorageToStorageResponse)
+                .toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("Storages Founded")
+                .setData(listStorages));
+    }
+    //--------------------------------------------------------------------------------------------------------------------
 
 }
