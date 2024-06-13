@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.storehousemgm.storehouse.entity.StoreHouse;
 
-import java.util.Optional;
-
-public interface StoreHoseRepository extends JpaRepository<StoreHouse, Long> {
+public interface StoreHouseRepository extends JpaRepository<StoreHouse, Long> {
 
 }

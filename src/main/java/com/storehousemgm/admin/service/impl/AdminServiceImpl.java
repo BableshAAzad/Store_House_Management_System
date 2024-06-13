@@ -3,15 +3,14 @@ package com.storehousemgm.admin.service.impl;
 
 import com.storehousemgm.exception.AdminAlreadyExistException;
 import com.storehousemgm.exception.AdminNotExistException;
-import com.storehousemgm.storehouse.entity.StoreHouse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.storehousemgm.admin.dto.requestdto.AdminRequest;
-import com.storehousemgm.admin.dto.responsedto.AdminResponse;
+import com.storehousemgm.admin.dto.AdminRequest;
+import com.storehousemgm.admin.dto.AdminResponse;
 import com.storehousemgm.admin.entity.Admin;
 import com.storehousemgm.enums.AdminType;
 import com.storehousemgm.admin.mapper.AdminMapper;
@@ -19,7 +18,7 @@ import com.storehousemgm.admin.repository.AdminRepository;
 import com.storehousemgm.admin.service.AdminService;
 import com.storehousemgm.exception.IllegalOperationException;
 import com.storehousemgm.exception.StoreHouseNotExistException;
-import com.storehousemgm.storehouse.repository.StoreHoseRepository;
+import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
@@ -37,7 +36,7 @@ public class AdminServiceImpl implements AdminService {
     private AdminMapper adminMapper;
 
     @Autowired
-    private StoreHoseRepository storeHouseRepository;
+    private StoreHouseRepository storeHouseRepository;
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> addSuperAdmin(@Valid AdminRequest adminRequest) {
@@ -135,7 +134,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<ResponseStructure<List<AdminResponse>>> findAdmins() {
-        List<AdminResponse> admins = adminRepository.findAll().stream().map(admin -> adminMapper.mapAdminToAdminResponse(admin)).toList();
+        List<AdminResponse> admins = adminRepository
+                .findAllByAdminType(AdminType.ADMIN)
+                .stream()
+                .map(adminMapper::mapAdminToAdminResponse).toList();
         return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<AdminResponse>>()
                 .setStatus(HttpStatus.FOUND.value())
                 .setMessage("Admins Founded")

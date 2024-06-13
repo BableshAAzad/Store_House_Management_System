@@ -1,4 +1,4 @@
-package com.storehousemgm.storehouse.dto.storehouserequest;
+package com.storehousemgm.storehouse.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

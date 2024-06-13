@@ -2,8 +2,8 @@ package com.storehousemgm.admin.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.storehousemgm.admin.dto.requestdto.AdminRequest;
-import com.storehousemgm.admin.dto.responsedto.AdminResponse;
+import com.storehousemgm.admin.dto.AdminRequest;
+import com.storehousemgm.admin.dto.AdminResponse;
 import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
