@@ -103,17 +103,4 @@ public class StoreHouseServiceImpl implements StoreHouseService {
     }
 //--------------------------------------------------------------------------------------------------------------------
 
-    @Override
-    public ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses(String city) {
-            List<StoreHouseResponse> listStoreHouseRes = new ArrayList<StoreHouseResponse>();
-        addressRepository.findByCity(city).forEach(address->{
-            listStoreHouseRes.add(storeHouseMapper.mapStoreHouseToStoreHouseResponse(address.getStoreHouse()));
-        });
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StoreHouseResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
-                .setMessage("StoreHouses Founded")
-                .setData(listStoreHouseRes));
-    }
-//--------------------------------------------------------------------------------------------------------------------
-
 }

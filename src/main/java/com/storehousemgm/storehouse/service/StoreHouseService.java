@@ -22,5 +22,4 @@ public interface StoreHouseService {
 
 	ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses();
 
-	ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses(@Valid String city);
 }

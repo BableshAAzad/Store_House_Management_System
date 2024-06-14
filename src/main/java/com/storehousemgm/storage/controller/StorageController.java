@@ -37,7 +37,7 @@ public class StorageController {
     public ResponseEntity<ResponseStructure<String>> addStorage(
             @RequestBody @Valid StorageRequest storageRequest,
             @PathVariable @Valid Long storeHouseId,
-            @RequestParam("no_of_storage_units") Integer noOfStorageUnits){
+            @RequestParam("no_of_storage_units") int noOfStorageUnits){
       return storageService.addStorage(storageRequest, storeHouseId, noOfStorageUnits);
     }
     //--------------------------------------------------------------------------------------------------------------------

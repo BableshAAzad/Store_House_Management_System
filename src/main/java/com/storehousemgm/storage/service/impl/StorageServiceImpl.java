@@ -33,11 +33,11 @@ public class StorageServiceImpl implements StorageService {
     //--------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<String>> addStorage(
-            StorageRequest storageRequest, Long storeHouseId, Integer noOfStorageUnits) {
+            StorageRequest storageRequest, Long storeHouseId, int noOfStorageUnits) {
         StoreHouse storeHouse = storeHouseRepository.findById(storeHouseId).orElseThrow(() ->
                 new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not exist"));
 //      StoreHouse Total Capacity = (Storage Capacity weight) * (No. of units) + (store House available capacity)
-        Double totalCapacity = storageRequest.getCapacityWeightInKg() * noOfStorageUnits + storeHouse.getTotalCapacity();
+        double totalCapacity = storageRequest.getCapacityWeightInKg() * noOfStorageUnits + storeHouse.getTotalCapacityInKg();
 
         List<Storage> storages = new ArrayList<Storage>();
         while (noOfStorageUnits > 0) {
@@ -48,7 +48,7 @@ public class StorageServiceImpl implements StorageService {
         }
         storages = storageRepository.saveAll(storages);
 
-        storeHouse.setTotalCapacity(totalCapacity);
+        storeHouse.setTotalCapacityInKg(totalCapacity);
         storeHouse.setStorages(storages);
         storeHouseRepository.save(storeHouse);
 
@@ -63,13 +63,15 @@ public class StorageServiceImpl implements StorageService {
     public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             StorageRequest storageRequest, Long storageId) {
         return storageRepository.findById(storageId).map(storage -> {
-            Storage storage1 = storageMapper.mapStorageRequestToStorage(storageRequest, new Storage());
-            storage1.setStorageId(storageId);
+            double temp = storage.getCapacityInWeight();
 
             StoreHouse storeHouse = storage.getStoreHouse();
+            double totalCapacity = (storageRequest.getCapacityWeightInKg() + storeHouse.getTotalCapacityInKg() - temp);
+            storeHouse.setTotalCapacityInKg(totalCapacity);
+
+            Storage storage1 = storageMapper.mapStorageRequestToStorage(storageRequest, storage);
+            storage1.setStorageId(storageId);
             storage1.setStoreHouse(storeHouse);
-            Double totalCapacity = storageRequest.getCapacityWeightInKg() + storeHouse.getTotalCapacity() - storage.getCapacityInWeight();
-            storeHouse.setTotalCapacity(totalCapacity);
 
             storeHouseRepository.save(storeHouse);
             storage = storageRepository.save(storage1);

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StorageMapper {
     public Storage mapStorageRequestToStorage(StorageRequest storageRequest, Storage storage){
-        Double capacityInArea = storageRequest.getHeightInMeters()
+        double capacityInArea = storageRequest.getHeightInMeters()
                 *storageRequest.getBreadthInMeters()
                 *storageRequest.getLengthInMeters();
 
