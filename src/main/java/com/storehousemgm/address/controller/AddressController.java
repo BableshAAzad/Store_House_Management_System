@@ -62,7 +62,7 @@ public class AddressController {
     }
     //--------------------------------------------------------------------------------------------------------------------
 
-    @Operation(description = "The endpoint is used to find the all StoreHouses data to the database",
+    @Operation(description = "The endpoint is used to find the all StoreHouses with address to the database",
             responses = {
                     @ApiResponse(responseCode = "302", description = "StoreHouses founded"),
                     @ApiResponse(responseCode = "404", description = "Invalid Input", content = {
