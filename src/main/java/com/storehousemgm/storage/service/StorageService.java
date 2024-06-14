@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StorageService {
     ResponseEntity<ResponseStructure<String>> addStorage(
-            @Valid StorageRequest storageRequest, @Valid Long storeHouseId, @Valid Integer noOfStorageUnits);
+            @Valid StorageRequest storageRequest, @Valid Long storeHouseId, @Valid int noOfStorageUnits);
 
     ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             @Valid StorageRequest storageRequest, @Valid Long storageId);
