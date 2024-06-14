@@ -51,6 +51,11 @@ public class ApplicationExceptionHandler {
 		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Storage is not exist");
 	 }
 
+	 @ExceptionHandler
+	 public  ResponseEntity<ErrorStructure<String>> handleInventoryNotExist(InventoryNotExistException ex){
+		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Inventory is not exist");
+	 }
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(

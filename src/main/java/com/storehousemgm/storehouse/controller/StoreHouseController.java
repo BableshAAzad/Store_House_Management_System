@@ -103,4 +103,18 @@ public class StoreHouseController {
 		return storeHouseService.findStoreHouses();
 	}
 
+//--------------------------------------------------------------------------------------------------------------------
+
+	@Operation(description = "The endpoint is used to find the all StoreHouses data to the database",
+			responses = {
+					@ApiResponse(responseCode = "302", description = "StoreHouses founded"),
+					@ApiResponse(responseCode = "404", description = "Invalid Input", content = {
+							@Content(schema = @Schema(oneOf = ErrorStructure.class))
+					})
+			})
+	@GetMapping("/cities/{city}/storehouses")
+	public ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses(@PathVariable @Valid String city){
+       return storeHouseService.findStoreHouses(city);
+	}
+
 }

@@ -36,8 +36,9 @@ public class StorageServiceImpl implements StorageService {
             StorageRequest storageRequest, Long storeHouseId, Integer noOfStorageUnits) {
         StoreHouse storeHouse = storeHouseRepository.findById(storeHouseId).orElseThrow(() ->
                 new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not exist"));
-
+//      StoreHouse Total Capacity = (Storage Capacity weight) * (No. of units) + (store House available capacity)
         Double totalCapacity = storageRequest.getCapacityWeightInKg() * noOfStorageUnits + storeHouse.getTotalCapacity();
+
         List<Storage> storages = new ArrayList<Storage>();
         while (noOfStorageUnits > 0) {
             Storage storage = storageMapper.mapStorageRequestToStorage(storageRequest, new Storage());
