@@ -21,4 +21,6 @@ public interface StoreHouseService {
 	ResponseEntity<ResponseStructure<StoreHouseResponse>> deleteStoreHouse(@Valid Long storeHouseId);
 
 	ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses();
+
+	ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses(@Valid String city);
 }

@@ -1,6 +1,7 @@
 package com.storehousemgm.storage.entity;
 
 import com.storehousemgm.enums.MaterialType;
+import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.storehouse.entity.StoreHouse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,6 +28,10 @@ public class Storage {
     private List<MaterialType> materialTypes;
     private Double maxAdditionalWeightInKg;
     private Double availableArea;
+
     @ManyToOne
     private StoreHouse storeHouse;
+
+    @ManyToMany
+    private List<Inventory> inventories;
 }
