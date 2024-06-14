@@ -56,6 +56,11 @@ public class ApplicationExceptionHandler {
 		 return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Inventory is not exist");
 	 }
 
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>>  handleClientAlreadyExist(ClientAlreadyExistException ex){
+		 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Already Client exist");
+	 }
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
