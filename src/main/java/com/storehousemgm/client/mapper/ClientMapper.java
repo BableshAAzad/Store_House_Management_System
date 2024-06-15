@@ -16,10 +16,6 @@ public class ClientMapper {
     public ClientResponse mapClientToClientResponse(Client client){
         return ClientResponse
                 .builder()
-                .clientId(client.getClientId())
-                .businessName(client.getBusinessName())
-                .email(client.getEmail())
-                .contactNumber(client.getContactNumber())
                 .apiKey(client.getApiKey())
                 .build();
     }

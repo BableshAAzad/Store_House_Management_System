@@ -1,7 +1,8 @@
 package com.storehousemgm.client.controller;
 
 import com.storehousemgm.client.dto.ClientRequest;
-import com.storehousemgm.client.service.impl.ClientService;
+import com.storehousemgm.client.dto.ClientResponse;
+import com.storehousemgm.client.service.ClientService;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/clients")
-    private ResponseEntity<ResponseStructure<String>> addClient(@Valid @RequestBody ClientRequest clientRequest){
+    private ResponseEntity<ResponseStructure<ClientResponse>> addClient(@Valid @RequestBody ClientRequest clientRequest){
       return clientService.addClient(clientRequest);
     }
 

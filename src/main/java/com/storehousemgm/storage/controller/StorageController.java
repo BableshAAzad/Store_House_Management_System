@@ -1,7 +1,10 @@
 package com.storehousemgm.storage.controller;
 
+import com.storehousemgm.exception.StoreHouseNotExistException;
 import com.storehousemgm.storage.dto.StorageRequest;
 import com.storehousemgm.storage.dto.StorageResponse;
+import com.storehousemgm.storage.mapper.StorageMapper;
+import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.storage.service.StorageService;
 import com.storehousemgm.utility.ErrorStructure;
 import com.storehousemgm.utility.ResponseStructure;
@@ -17,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,6 +29,7 @@ public class StorageController {
 
     @Autowired
     private StorageService storageService;
+
     //--------------------------------------------------------------------------------------------------------------------
 
     @Operation(description = "The endpoint is used to add the Storage data to the database",
@@ -86,6 +91,26 @@ public class StorageController {
     public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
         return storageService.getStorages();
     }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/findFirstStorage/{capacityInWeight}/{lengthInMeters}/{breadthInMeters}/{heightInMeters}")
+    public ResponseEntity<ResponseStructure<StorageResponse>> findFirstStorageUnderCriteria(
+                                    @PathVariable double capacityInWeight,
+                                    @PathVariable double lengthInMeters,
+                                    @PathVariable double breadthInMeters,
+                                    @PathVariable double heightInMeters){
+        return storageService.findFirstStorageUnderCriteria(capacityInWeight,  lengthInMeters, breadthInMeters, heightInMeters);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/findAllTheStoragesAvailable/{capacityInWeight}/{lengthInMeters}/{breadthInMeters}/{heightInMeters}")
+    public ResponseEntity<ResponseStructure<List<Map<String, Double>>>> findAllTheStoragesAvailable(@PathVariable double capacityInWeight,
+                                                                                                     @PathVariable double lengthInMeters,
+                                                                                                     @PathVariable double breadthInMeters,
+                                                                                                     @PathVariable double heightInMeters){
+        return storageService.findAllTheStoragesAvailable(capacityInWeight,  lengthInMeters, breadthInMeters, heightInMeters);
+    }
+
     //--------------------------------------------------------------------------------------------------------------------
 
 }

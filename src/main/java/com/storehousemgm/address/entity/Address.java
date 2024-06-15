@@ -18,7 +18,7 @@ public class Address {
     private String city;
     private String state;
     private String country;
-    private Integer pincode;
+    private int pincode;
     private String longitude;
     private String latitude;
 
