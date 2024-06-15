@@ -21,19 +21,19 @@ public class StorageRequest {
 
     @NotNull(message = "Capacity Weight cannot be null")
     @Positive(message = "Capacity Weight must be positive")
-    private Double capacityWeightInKg;
+    private double capacityWeightInKg;
 
     @NotNull(message = "Length cannot be null")
     @Positive(message = "Length must be positive")
-    private Double lengthInMeters;
+    private double lengthInMeters;
 
     @NotNull(message = "Breadth cannot be null")
     @Positive(message = "Breadth must be positive")
-    private Double breadthInMeters;
+    private double breadthInMeters;
 
     @NotNull(message = "Height cannot be null")
     @Positive(message = "Height must be positive")
-    private Double heightInMeters;
+    private double heightInMeters;
 
     @NotNull(message = "Material types cannot be null")
     @Size(min=1, message = "There must be at least one materials type")
