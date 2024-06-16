@@ -1,6 +1,7 @@
 package com.storehousemgm.storage.service.impl;
 
 import com.storehousemgm.exception.StorageNotExistException;
+import com.storehousemgm.exception.StorageTypeNotExistException;
 import com.storehousemgm.exception.StoreHouseNotExistException;
 import com.storehousemgm.storage.dto.StorageRequest;
 import com.storehousemgm.storage.dto.StorageResponse;
@@ -8,9 +9,13 @@ import com.storehousemgm.storage.entity.Storage;
 import com.storehousemgm.storage.mapper.StorageMapper;
 import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.storage.service.StorageService;
+import com.storehousemgm.storagetype.entity.StorageType;
+import com.storehousemgm.storagetype.repository.StorageTypeRepository;
 import com.storehousemgm.storehouse.entity.StoreHouse;
 import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,7 @@ import java.util.Map;
 
 @Service
 public class StorageServiceImpl implements StorageService {
+    private static final Logger log = LoggerFactory.getLogger(StorageServiceImpl.class);
     @Autowired
     private StorageMapper storageMapper;
 
@@ -32,26 +38,42 @@ public class StorageServiceImpl implements StorageService {
     @Autowired
     private StorageRepository storageRepository;
 
+    @Autowired
+    private StorageTypeRepository storageTypeRepository;
+
     //--------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<String>> addStorage(
-            StorageRequest storageRequest, Long storeHouseId, int noOfStorageUnits) {
+            StorageRequest storageRequest,
+            Long storeHouseId,
+            Long storageTypeId,
+            int noOfStorageUnits) {
+
         StoreHouse storeHouse = storeHouseRepository.findById(storeHouseId).orElseThrow(() ->
                 new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not exist"));
-//      StoreHouse Total Capacity = (Storage Capacity weight) * (No. of units) + (store House available capacity)
-        double totalCapacity = storageRequest.getCapacityWeightInKg() * noOfStorageUnits + storeHouse.getTotalCapacityInKg();
+
+        StorageType storageType = storageTypeRepository.findById(storageTypeId).orElseThrow(()->
+                new StorageTypeNotExistException("StorageTypeId : "+storageTypeId+", StorageType is not exist"));
+
+        storageType.setUnitsAvailable(storageType.getUnitsAvailable()+noOfStorageUnits);
+        storageType = storageTypeRepository.save(storageType);
 
         List<Storage> storages = new ArrayList<Storage>();
         while (noOfStorageUnits > 0) {
             Storage storage = storageMapper.mapStorageRequestToStorage(storageRequest, new Storage());
             storage.setStoreHouse(storeHouse);
+            storage.setStorageType(storageType);
+            storage.setMaxAdditionalWeightInKg(storageType.getCapacityInWeight());
+            storage.setAvailableArea(storageType.getHeightInMeters()*storageType.getBreadthInMeters()*storageType.getBreadthInMeters());
+
             storages.add(storage);
             noOfStorageUnits--;
         }
+
         storages = storageRepository.saveAll(storages);
 
+        double totalCapacity = (storageType.getCapacityInWeight() * noOfStorageUnits) + storeHouse.getTotalCapacityInKg();
         storeHouse.setTotalCapacityInKg(totalCapacity);
-        storeHouse.setStorages(storages);
         storeHouseRepository.save(storeHouse);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<String>()
@@ -65,7 +87,7 @@ public class StorageServiceImpl implements StorageService {
     public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             StorageRequest storageRequest, Long storageId) {
         return storageRepository.findById(storageId).map(storage -> {
-            double temp = storage.getCapacityInWeight();
+            double temp = storage.getStorageTypes().getCapacityInWeight();
 
             StoreHouse storeHouse = storage.getStoreHouse();
             double totalCapacity = (storageRequest.getCapacityWeightInKg() + storeHouse.getTotalCapacityInKg() - temp);
