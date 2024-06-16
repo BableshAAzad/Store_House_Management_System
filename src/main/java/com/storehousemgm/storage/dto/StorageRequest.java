@@ -19,21 +19,21 @@ public class StorageRequest {
     @NotBlank(message = "Section name cannot be blank")
     private String section;
 
-    @NotNull(message = "Capacity Weight cannot be null")
-    @Positive(message = "Capacity Weight must be positive")
-    private double capacityWeightInKg;
-
-    @NotNull(message = "Length cannot be null")
-    @Positive(message = "Length must be positive")
-    private double lengthInMeters;
-
-    @NotNull(message = "Breadth cannot be null")
-    @Positive(message = "Breadth must be positive")
-    private double breadthInMeters;
-
-    @NotNull(message = "Height cannot be null")
-    @Positive(message = "Height must be positive")
-    private double heightInMeters;
+//    @NotNull(message = "Capacity Weight cannot be null")
+//    @Positive(message = "Capacity Weight must be positive")
+//    private double capacityWeightInKg;
+//
+//    @NotNull(message = "Length cannot be null")
+//    @Positive(message = "Length must be positive")
+//    private double lengthInMeters;
+//
+//    @NotNull(message = "Breadth cannot be null")
+//    @Positive(message = "Breadth must be positive")
+//    private double breadthInMeters;
+//
+//    @NotNull(message = "Height cannot be null")
+//    @Positive(message = "Height must be positive")
+//    private double heightInMeters;
 
     @NotNull(message = "Material types cannot be null")
     @Size(min=1, message = "There must be at least one materials type")

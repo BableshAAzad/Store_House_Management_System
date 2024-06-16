@@ -39,13 +39,14 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PostMapping("/storehouses/{storeHouseId}/storages")
+    @PostMapping("/storehouses/{storeHouseId}/storageTypes/{storageTypeId}/storages")
     @PreAuthorize("hasAuthority('CREATE_STORAGE')")
     public ResponseEntity<ResponseStructure<String>> addStorage(
             @RequestBody @Valid StorageRequest storageRequest,
             @PathVariable @Valid Long storeHouseId,
+            @PathVariable @Valid Long storageTypeId,
             @RequestParam("no_of_storage_units") int noOfStorageUnits){
-      return storageService.addStorage(storageRequest, storeHouseId, noOfStorageUnits);
+      return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
     }
     //--------------------------------------------------------------------------------------------------------------------
 

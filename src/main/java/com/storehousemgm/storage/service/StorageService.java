@@ -11,7 +11,10 @@ import java.util.Map;
 
 public interface StorageService {
     ResponseEntity<ResponseStructure<String>> addStorage(
-            @Valid StorageRequest storageRequest, @Valid Long storeHouseId, @Valid int noOfStorageUnits);
+            @Valid StorageRequest storageRequest,
+            @Valid Long storeHouseId,
+            @Valid Long storageTypeId,
+            @Valid int noOfStorageUnits);
 
     ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             @Valid StorageRequest storageRequest, @Valid Long storageId);
