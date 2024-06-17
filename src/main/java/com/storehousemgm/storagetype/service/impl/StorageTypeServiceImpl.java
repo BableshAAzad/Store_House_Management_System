@@ -49,11 +49,19 @@ public class StorageTypeServiceImpl implements StorageTypeService {
     }
     //--------------------------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(StorageTypeRequest storageTypeRequest) {
-        return null;
+    public ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(
+            StorageTypeRequest storageTypeRequest, Long storageTypeId) {
+       return storageTypeRepository.findById(storageTypeId).map(storageType->{
+        storageType = storageTypeMapper.mapStorageTypeRequestToStorageType(storageTypeRequest, storageType);
+
+//        TODO update storeHouse is pending
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StorageTypeResponse>()
+                    .setStatus(HttpStatus.OK.value())
+                    .setMessage("StoreType is updated")
+                    .setData(storageTypeMapper.mapStorageTypeToStorageTypeResponse(storageType)));
+        }).orElseThrow(()->new StorageTypeNotExistException("StorageTypeId : "+storageTypeId+", does not exist"));
     }
-
-
     //--------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<StorageTypeResponse>> findStorageType(Long storageTypeId) {

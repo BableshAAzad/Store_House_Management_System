@@ -19,6 +19,6 @@ public interface StorageTypeService {
     ResponseEntity<ResponseStructure<List<StorageTypeResponse>>> findStorageTypes();
 
     ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(
-            @Valid StorageTypeRequest storageTypeRequest);
+            @Valid StorageTypeRequest storageTypeRequest, @Valid Long storageTypeId);
 
 }
