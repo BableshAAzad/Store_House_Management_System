@@ -28,8 +28,9 @@ public class StorageTypeController {
     //--------------------------------------------------------------------------------------------------------------------
     @PutMapping("/storageTypes/{storageTypeId}")
     public ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(
-            @RequestBody StorageTypeRequest storageTypeRequest){
-        return storageTypeService.updateStorageType(storageTypeRequest);
+            @RequestBody StorageTypeRequest storageTypeRequest,
+            @PathVariable Long storageTypeId){
+        return storageTypeService.updateStorageType(storageTypeRequest, storageTypeId);
     }
     //--------------------------------------------------------------------------------------------------------------------
     @GetMapping("/storageTypes/{storageTypeId}")

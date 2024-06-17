@@ -19,9 +19,10 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @PostMapping("/clients")
+    @PostMapping("/client/register")
     private ResponseEntity<ResponseStructure<ClientResponse>> addClient(@Valid @RequestBody ClientRequest clientRequest){
       return clientService.addClient(clientRequest);
     }
+
 
 }
