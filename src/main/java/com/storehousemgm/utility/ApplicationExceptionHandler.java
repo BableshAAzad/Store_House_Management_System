@@ -60,6 +60,10 @@ public class ApplicationExceptionHandler {
 	 public ResponseEntity<ErrorStructure<String>>  handleClientAlreadyExist(ClientAlreadyExistException ex){
 		 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Already Client exist");
 	 }
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>>  handleStorageTypeAlreadyExist(StorageTypeAlreadyExistException ex){
+		return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "StorageType already exist exist");
+	}
 
      
  	@ExceptionHandler

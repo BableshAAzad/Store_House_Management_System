@@ -19,10 +19,17 @@ public class StorageTypeController {
     private StorageTypeService storageTypeService;
     //--------------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/storages/{storageId}/storageTypes")
+    @PostMapping("/storageTypes")
     public ResponseEntity<ResponseStructure<StorageTypeResponse>> addStorageType(
-            @RequestBody StorageTypeRequest storageTypeRequest, @Valid @PathVariable Long storageId){
-      return storageTypeService.addStorageType(storageTypeRequest, storageId);
+            @RequestBody StorageTypeRequest storageTypeRequest){
+
+      return storageTypeService.addStorageType(storageTypeRequest);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+    @PutMapping("/storageTypes/{storageTypeId}")
+    public ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(
+            @RequestBody StorageTypeRequest storageTypeRequest){
+        return storageTypeService.updateStorageType(storageTypeRequest);
     }
     //--------------------------------------------------------------------------------------------------------------------
     @GetMapping("/storageTypes/{storageTypeId}")
@@ -34,6 +41,7 @@ public class StorageTypeController {
     public ResponseEntity<ResponseStructure<List<StorageTypeResponse>>> findStorageTypes(){
         return storageTypeService.findStorageTypes();
     }
+
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 package com.storehousemgm.storagetype.service.impl;
 
-import com.storehousemgm.exception.StorageNotExistException;
+import com.storehousemgm.exception.StorageTypeAlreadyExistException;
 import com.storehousemgm.exception.StorageTypeNotExistException;
 import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.storagetype.dto.StorageTypeRequest;
@@ -30,16 +30,29 @@ public class StorageTypeServiceImpl implements StorageTypeService {
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<StorageTypeResponse>> addStorageType(StorageTypeRequest storageTypeRequest, Long storageId) {
-        return storageRepository.findById(storageId).map(storage->{
-        StorageType storageType = storageTypeMapper.mapStorageTypeRequestToStorageType(storageTypeRequest, new StorageType());
-        storageType = storageTypeRepository.save(storageType);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<StorageTypeResponse>()
-                .setStatus(HttpStatus.CREATED.value())
-                .setMessage("StorageType Created")
-                .setData(storageTypeMapper.mapStorageTypeToStorageTypeResponse(storageType)));
-        }).orElseThrow(()-> new StorageNotExistException("StorageId : "+storageId+", is not exist"));
+    public ResponseEntity<ResponseStructure<StorageTypeResponse>> addStorageType(StorageTypeRequest storageTypeRequest) {
+       boolean bl = storageTypeRepository.existsByLengthInMetersAndBreadthInMetersAndHeightInMetersAndCapacityWeightInKg(
+                storageTypeRequest.getLengthInMeters(),
+                storageTypeRequest.getBreadthInMeters(),
+                storageTypeRequest.getHeightInMeters(),
+                storageTypeRequest.getCapacityWeightInKg());
+
+        if(!bl) {
+            StorageType storageType = storageTypeMapper.mapStorageTypeRequestToStorageType(storageTypeRequest, new StorageType());
+            storageType = storageTypeRepository.save(storageType);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<StorageTypeResponse>()
+                    .setStatus(HttpStatus.CREATED.value())
+                    .setMessage("StorageType Created")
+                    .setData(storageTypeMapper.mapStorageTypeToStorageTypeResponse(storageType)));
+        }else
+            throw new StorageTypeAlreadyExistException("StorageType is already exist in database");
     }
+    //--------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<StorageTypeResponse>> updateStorageType(StorageTypeRequest storageTypeRequest) {
+        return null;
+    }
+
 
     //--------------------------------------------------------------------------------------------------------------------
     @Override
@@ -64,6 +77,9 @@ public class StorageTypeServiceImpl implements StorageTypeService {
                 .setMessage("StorageType Founded")
                 .setData(listStorageTypeResponse));
     }
+
+    //--------------------------------------------------------------------------------------------------------------------
+
 
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------

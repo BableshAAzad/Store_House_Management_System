@@ -8,6 +8,6 @@ public class StorageTypeRequest {
     private double lengthInMeters;
     private double breadthInMeters;
     private double heightInMeters;
-    private double capacityInWeight;
+    private double capacityWeightInKg;
 
 }

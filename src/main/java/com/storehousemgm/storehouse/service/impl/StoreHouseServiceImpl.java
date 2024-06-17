@@ -34,8 +34,6 @@ public class StoreHouseServiceImpl implements StoreHouseService {
     @Autowired
     private AdminRepository adminRepository;
 
-    @Autowired
-    private AddressRepository addressRepository;
 //--------------------------------------------------------------------------------------------------------------------
 
     @Override
