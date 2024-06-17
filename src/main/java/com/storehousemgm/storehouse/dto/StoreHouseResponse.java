@@ -14,5 +14,5 @@ import lombok.Setter;
 public class StoreHouseResponse {
     private Long storeHouseId;
     private String storeHoseName;
-    private Double totalCapacity;
+    private Double totalCapacityInKg;
 }

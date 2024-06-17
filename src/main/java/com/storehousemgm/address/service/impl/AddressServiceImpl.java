@@ -8,6 +8,7 @@ import com.storehousemgm.address.repository.AddressRepository;
 import com.storehousemgm.address.service.AddressService;
 import com.storehousemgm.exception.AddressNotExistException;
 import com.storehousemgm.exception.StoreHouseNotExistException;
+import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -86,4 +87,22 @@ public class AddressServiceImpl implements AddressService {
     }
 //--------------------------------------------------------------------------------------------------------------------
 
+    @Override
+    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesAddress(String city) {
+        List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
+        addressRepository.findByCity(city).forEach(address->{
+        Map<String, Object> mapStoreHouseRes = new HashMap<String, Object>();
+            mapStoreHouseRes.put("StoreHouseId", address.getStoreHouse().getStoreHouseId());
+            mapStoreHouseRes.put("Name", address.getStoreHouse().getName());
+            mapStoreHouseRes.put("Address", addressMapper.mapAddressToAddressResponse(address));
+            res.add(mapStoreHouseRes);
+        });
+        return ResponseEntity.status(HttpStatus.FOUND).body(
+                new ResponseStructure<List<Map<String, Object>>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("StoreHouses Founded")
+                .setData(res));
+    }
+
+    //--------------------------------------------------------------------------------------------------------------------
 }

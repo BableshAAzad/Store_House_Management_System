@@ -22,7 +22,7 @@ public class StoreHouseMapper {
 	public StoreHouseResponse mapStoreHouseToStoreHouseResponse(StoreHouse storeHouse) {
 		return StoreHouseResponse.builder().storeHouseId(storeHouse.getStoreHouseId())
 				.storeHoseName(storeHouse.getName())
-				.totalCapacity(storeHouse.getTotalCapacity())
+				.totalCapacityInKg(storeHouse.getTotalCapacityInKg())
 				.build();
 	}
 }
