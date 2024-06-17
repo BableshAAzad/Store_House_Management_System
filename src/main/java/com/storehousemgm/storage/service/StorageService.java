@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
 
 public interface StorageService {
     ResponseEntity<ResponseStructure<String>> addStorage(
@@ -23,13 +22,4 @@ public interface StorageService {
 
     ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages();
 
-    ResponseEntity<ResponseStructure<StorageResponse>> findFirstStorageUnderCriteria(@Valid double capacityInWeight,
-                                                                                     @Valid double lengthInMeters,
-                                                                                     @Valid double breadthInMeters,
-                                                                                     @Valid double heightInMeters);
-
-    ResponseEntity<ResponseStructure<List<Map<String, Double>>>> findAllTheStoragesAvailable(@Valid double capacityInWeight,
-                                                                                              @Valid double lengthInMeters,
-                                                                                              @Valid double breadthInMeters,
-                                                                                              @Valid double heightInMeters);
 }

@@ -14,21 +14,16 @@ import com.storehousemgm.storagetype.repository.StorageTypeRepository;
 import com.storehousemgm.storehouse.entity.StoreHouse;
 import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class StorageServiceImpl implements StorageService {
-    private static final Logger log = LoggerFactory.getLogger(StorageServiceImpl.class);
     @Autowired
     private StorageMapper storageMapper;
 
@@ -58,12 +53,17 @@ public class StorageServiceImpl implements StorageService {
         storageType.setUnitsAvailable(storageType.getUnitsAvailable()+noOfStorageUnits);
         storageType = storageTypeRepository.save(storageType);
 
+
+        double totalCapacity = storageType.getCapacityWeightInKg() * noOfStorageUnits + storeHouse.getTotalCapacityInKg();
+        storeHouse.setTotalCapacityInKg(totalCapacity);
+        storeHouseRepository.save(storeHouse);
+
         List<Storage> storages = new ArrayList<Storage>();
         while (noOfStorageUnits > 0) {
             Storage storage = storageMapper.mapStorageRequestToStorage(storageRequest, new Storage());
             storage.setStoreHouse(storeHouse);
             storage.setStorageType(storageType);
-            storage.setMaxAdditionalWeightInKg(storageType.getCapacityInWeight());
+            storage.setMaxAdditionalWeightInKg(storageType.getCapacityWeightInKg());
             storage.setAvailableArea(storageType.getHeightInMeters()*storageType.getBreadthInMeters()*storageType.getBreadthInMeters());
 
             storages.add(storage);
@@ -71,10 +71,6 @@ public class StorageServiceImpl implements StorageService {
         }
 
         storages = storageRepository.saveAll(storages);
-
-        double totalCapacity = (storageType.getCapacityInWeight() * noOfStorageUnits) + storeHouse.getTotalCapacityInKg();
-        storeHouse.setTotalCapacityInKg(totalCapacity);
-        storeHouseRepository.save(storeHouse);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<String>()
                 .setStatus(HttpStatus.CREATED.value())
@@ -87,17 +83,8 @@ public class StorageServiceImpl implements StorageService {
     public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             StorageRequest storageRequest, Long storageId) {
         return storageRepository.findById(storageId).map(storage -> {
-            double temp = storage.getStorageTypes().getCapacityInWeight();
-
-            StoreHouse storeHouse = storage.getStoreHouse();
-            double totalCapacity = (storageRequest.getCapacityWeightInKg() + storeHouse.getTotalCapacityInKg() - temp);
-            storeHouse.setTotalCapacityInKg(totalCapacity);
-
             Storage storage1 = storageMapper.mapStorageRequestToStorage(storageRequest, storage);
-            storage1.setStorageId(storageId);
-            storage1.setStoreHouse(storeHouse);
 
-            storeHouseRepository.save(storeHouse);
             storage = storageRepository.save(storage1);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StorageResponse>()
                     .setStatus(HttpStatus.OK.value())
@@ -129,46 +116,4 @@ public class StorageServiceImpl implements StorageService {
                 .setMessage("Storages Founded")
                 .setData(listStorages));
     }
-    //--------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public ResponseEntity<ResponseStructure<StorageResponse>> findFirstStorageUnderCriteria(double capacityInWeight,
-                                                                                            double lengthInMeters,
-                                                                                            double breadthInMeters,
-                                                                                            double heightInMeters) {
-       return storageRepository.findFirstByCapacityInWeightAndLengthInMetersAndBreadthInMetersAndHeightInMeters(
-                capacityInWeight,  lengthInMeters, breadthInMeters, heightInMeters).map(storage->{
-       return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<StorageResponse>()
-               .setStatus(HttpStatus.FOUND.value())
-               .setMessage("Storage Founded")
-               .setData(storageMapper.mapStorageToStorageResponse(storage)));
-       }).orElseThrow(()-> new StoreHouseNotExistException("Storage is not present"));
-    }
-
-    @Override
-    public ResponseEntity<ResponseStructure<List<Map<String, Double>>>> findAllTheStoragesAvailable(double capacityInWeight,
-                                                                                          double lengthInMeters,
-                                                                                          double breadthInMeters,
-                                                                                          double heightInMeters) {
-        List<Map<String, Double>> listResponse = new ArrayList<Map<String, Double>>();
-                storageRepository.findAllByCapacityInWeightAndLengthInMetersAndBreadthInMetersAndHeightInMeters(
-
-                capacityInWeight, lengthInMeters, breadthInMeters, heightInMeters).forEach(storage -> {
-                    Map<String, Double> map = new HashMap<String, Double>();
-                    map.put("lengthInMeters",  storage.getLengthInMeters());
-                    map.put("breadthInMeters", storage.getBreadthInMeters());
-                    map.put("heightInMeters",  storage.getHeightInMeters());
-                    map.put("capacityInWeight", storage.getCapacityInWeight());
-
-                    listResponse.add(map);
-
-                });
-
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<Map<String, Double>>>()
-                    .setStatus(HttpStatus.FOUND.value())
-                    .setMessage("Storages Types found successfully")
-                    .setData(listResponse));
-    }
-    //--------------------------------------------------------------------------------------------------------------------
-
 }

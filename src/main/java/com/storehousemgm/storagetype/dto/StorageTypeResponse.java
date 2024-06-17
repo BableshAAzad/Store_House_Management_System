@@ -13,7 +13,7 @@ public class StorageTypeResponse {
     private double lengthInMeters;
     private double breadthInMeters;
     private double heightInMeters;
-    private double capacityInWeight;
+    private double capacityWeightInKg;
     private int unitsAvailable;
 
 }

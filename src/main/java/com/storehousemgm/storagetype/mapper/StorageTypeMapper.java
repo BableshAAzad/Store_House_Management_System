@@ -12,6 +12,7 @@ public class StorageTypeMapper {
         storageType.setLengthInMeters(storageTypeRequest.getLengthInMeters());
         storageType.setBreadthInMeters(storageTypeRequest.getBreadthInMeters());
         storageType.setHeightInMeters(storageTypeRequest.getHeightInMeters());
+        storageType.setCapacityWeightInKg(storageTypeRequest.getCapacityWeightInKg());
        return storageType;
     }
 
@@ -21,6 +22,7 @@ public class StorageTypeMapper {
                 .lengthInMeters(storageType.getLengthInMeters())
                 .breadthInMeters(storageType.getBreadthInMeters())
                 .heightInMeters(storageType.getHeightInMeters())
+                .capacityWeightInKg(storageType.getCapacityWeightInKg())
                 .unitsAvailable(storageType.getUnitsAvailable())
                 .build();
     }
