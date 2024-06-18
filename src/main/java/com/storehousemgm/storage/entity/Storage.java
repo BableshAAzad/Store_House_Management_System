@@ -21,19 +21,16 @@ public class Storage {
     private Long storageId;
     private String blockName;
     private String section;
-//    private double capacityInWeight;
-//    private double lengthInMeters;
-//    private double breadthInMeters;
-//    private double heightInMeters;
     @Enumerated
     private List<MaterialType> materialTypes;
     private double maxAdditionalWeightInKg;
     private double availableArea;
+    private Long sellerId;
 
     @ManyToOne
     private StoreHouse storeHouse;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "storages")
     private List<Inventory> inventories;
 
     @ManyToOne

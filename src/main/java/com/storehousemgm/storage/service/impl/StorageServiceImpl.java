@@ -64,7 +64,7 @@ public class StorageServiceImpl implements StorageService {
             storage.setStoreHouse(storeHouse);
             storage.setStorageType(storageType);
             storage.setMaxAdditionalWeightInKg(storageType.getCapacityWeightInKg());
-            storage.setAvailableArea(storageType.getHeightInMeters()*storageType.getBreadthInMeters()*storageType.getBreadthInMeters());
+            storage.setAvailableArea(storageType.getHeightInMeters()*storageType.getBreadthInMeters()*storageType.getLengthInMeters());
 
             storages.add(storage);
             noOfStorageUnits--;

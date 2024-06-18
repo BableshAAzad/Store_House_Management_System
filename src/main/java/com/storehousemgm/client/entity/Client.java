@@ -1,10 +1,10 @@
 package com.storehousemgm.client.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.storehousemgm.inventory.entity.Inventory;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,4 +20,7 @@ public class Client {
     private String email;
     private long contactNumber;
     private String apiKey;
+
+    @OneToMany(mappedBy = "client")
+    private List<Inventory> inventories;
 }

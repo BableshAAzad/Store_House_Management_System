@@ -98,8 +98,21 @@ public class AddressController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
+    @GetMapping("/client/cities/{city}/storehouses")
+    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHouseByCityForClient(@PathVariable @Valid String city){
+        return addressService.findStoreHousesAddress(city);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Operation(description = "The endpoint is used to find the all StoreHouses with address to the database",
+            responses = {
+                    @ApiResponse(responseCode = "302", description = "StoreHouses founded"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Input", content = {
+                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
+                    })
+            })
     @GetMapping("/cities/{city}/storehouses")
-    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHouses(@PathVariable @Valid String city){
+    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHouseByCityForAdmin(@PathVariable @Valid String city){
         return addressService.findStoreHousesAddress(city);
     }
 }
