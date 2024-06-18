@@ -40,8 +40,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ResponseEntity<ResponseStructure<InventoryResponse>> addInventory(
-            InventoryRequest inventoryRequest, Long storageId, Long clientId ) {
-        Client client = clientRepository.findById(clientId).orElseThrow(()-> new ClientNotExistException("ClientId : "+clientId+", is not exist"));
+            InventoryRequest inventoryRequest, Long storageId, Long clientId) {
+        Client client = clientRepository.findById(clientId).orElseThrow(() -> new ClientNotExistException("ClientId : " + clientId + ", is not exist"));
 
         return storageRepository.findById(storageId).map(storage -> {
             Inventory inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, new Inventory());
@@ -72,13 +72,32 @@ public class InventoryServiceImpl implements InventoryService {
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
-           List<Storage> listStorages = inventory.getStorages();
-            listStorages.forEach(storage -> {
-//                storage
-//                TODO creating here update logic
-            });
 
-        }).orElseThrow(()->new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
+            List<Storage> listStorages = getUpdatedStorages(inventory);
+            inventory.setStorages(listStorages);
+            inventory = inventoryRepository.save(inventory);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
+                    .setStatus(HttpStatus.CREATED.value())
+                    .setMessage("Inventory Updated")
+                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
+        }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
+    }
+
+    private static List<Storage> getUpdatedStorages(Inventory inventory) {
+        double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
+        double qnt = inventory.getQuantity();
+
+        double maxWeight = inventory.getWeightInKg() * inventory.getQuantity();
+
+        List<Storage> listStorages = inventory.getStorages();
+        listStorages.forEach(storage -> {
+            double updatedStorageArea = storage.getAvailableArea() - (productSize * qnt);
+            storage.setAvailableArea(updatedStorageArea);
+
+            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - maxWeight;
+            storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+        });
+        return listStorages;
     }
 
     //--------------------------------------------------------------------------------------------------------------------
