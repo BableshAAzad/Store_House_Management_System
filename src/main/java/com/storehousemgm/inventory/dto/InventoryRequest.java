@@ -8,11 +8,11 @@ import java.util.List;
 @Getter
 public class InventoryRequest {
     private String productTitle;
-    private Double lengthInMeters;
-    private Double breadthInMeters;
-    private Double heightInMeters;
-    private Double weightInKg;
-    private Integer quantity;
+    private double lengthInMeters;
+    private double breadthInMeters;
+    private double heightInMeters;
+    private double weightInKg;
+    private int quantity;
     private List<MaterialType> materialTypes;
     private Long sellerId;
 }

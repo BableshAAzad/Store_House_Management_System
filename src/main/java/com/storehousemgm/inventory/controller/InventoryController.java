@@ -18,11 +18,11 @@ public class InventoryController {
     private InventoryService inventoryService;
     //--------------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/client/{clientId}/storages/{storageId}/inventories")
+    @PostMapping("/clients/{clientId}/storages/{storageId}/inventories")
     public ResponseEntity<ResponseStructure<InventoryResponse>> addInventory(
             @Valid @RequestBody InventoryRequest inventoryRequest,
-            @Valid Long storageId,
-            @Valid Long clientId ) {
+            @Valid @PathVariable Long storageId,
+            @Valid @PathVariable Long clientId ) {
         return inventoryService.addInventory(inventoryRequest, storageId, clientId);
     }
 

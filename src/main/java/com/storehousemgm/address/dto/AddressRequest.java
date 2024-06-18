@@ -27,7 +27,7 @@ public class AddressRequest {
     private String country;
 
     @NotNull(message = "Pincode is mandatory")
-    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Pincode contains six digits only")
+//    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Pincode contains six digits only")
     private int pincode;
 
     @NotNull(message = "Longitude can not be null")
