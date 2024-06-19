@@ -13,6 +13,8 @@ import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.mapper.InventoryMapper;
 import com.storehousemgm.inventory.repository.InventoryRepository;
 import com.storehousemgm.inventory.service.InventoryService;
+import com.storehousemgm.stock.entity.Stock;
+import com.storehousemgm.stock.repository.StockRepository;
 import com.storehousemgm.storage.entity.Storage;
 import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.utility.ResponseStructure;
@@ -25,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -39,6 +42,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -50,14 +56,27 @@ public class InventoryServiceImpl implements InventoryService {
             Inventory inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, new Inventory());
             inventory.setRestockedAt(LocalDate.now());
 
+            Optional<Stock> optionalStock = stockRepository.findByQuantity(inventoryRequest.getQuantity());
+            Stock stock;
+            if (optionalStock.isEmpty()) {
+                stock = new Stock();
+                stock.setQuantity(inventoryRequest.getQuantity());
+                stock.setStorage(storage);
+                stock = stockRepository.save(stock);
+                inventory.setStocks(List.of(stock));
+            } else {
+                stock = optionalStock.get();
+                inventory.setStocks(List.of(stock));
+            }
+
             double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
-            double updatedStorageArea = storage.getAvailableArea() - (productSize * inventory.getQuantity());
+            double updatedStorageArea = storage.getAvailableArea() - (productSize * inventoryRequest.getQuantity());
             if (updatedStorageArea <= 0)
                 throw new IllegalOperationException("Sufficient space in storage");
             else
                 storage.setAvailableArea(updatedStorageArea);
 
-            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * inventory.getQuantity());
+            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * inventoryRequest.getQuantity());
             if (updatedStorageMaxWeight <= 0)
                 throw new IllegalOperationException("Weight is too much, not support storage");
             else
@@ -101,9 +120,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     private static List<Storage> getUpdatedStorages(Inventory inventory) {
         double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
-        double qnt = inventory.getQuantity();
+        double qnt = inventory.getStocks().getFirst().getQuantity();
 
-        double maxWeight = inventory.getWeightInKg() * inventory.getQuantity();
+        double maxWeight = inventory.getWeightInKg() * inventory.getStocks().getFirst().getQuantity();
 
         List<Storage> listStorages = inventory.getStorages();
         listStorages.forEach(storage -> {

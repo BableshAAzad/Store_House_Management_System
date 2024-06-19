@@ -38,7 +38,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PurchaseOrder purchaseOrder = purchaseOrderMapper.mapPurchaseOrderRequestToPurchaseOrder(purchaseOrderRequest, new PurchaseOrder());
             purchaseOrder.setInvoiceLink(UUID.randomUUID().toString().concat(".jpg"));
 
-            inventory.setQuantity(inventory.getQuantity() - purchaseOrder.getOrderQuantity());
+//            inventory.setQuantity(inventory.getQuantity() - purchaseOrder.getOrderQuantity());
+//            int temp = inventory.getStocks().getFirst().getQuantity() - purchaseOrder.getOrderQuantity();
+//            inventory.setStocks();
             inventory = inventoryRepository.save(inventory);
 
             purchaseOrder.setInventories(List.of(inventory));
@@ -63,13 +65,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if(newOrderQnt>oldOrderQnt){
                int updateOrderQnt = newOrderQnt-oldOrderQnt;
                 listInventories.forEach(inventory->{
-                    inventory.setQuantity(inventory.getQuantity()-updateOrderQnt);
+//                    inventory.setQuantity(inventory.getQuantity()-updateOrderQnt);
                     inventoryRepository.save(inventory);
                 });
             }else{
                 int updateOrderQnt = oldOrderQnt-newOrderQnt;
                 listInventories.forEach(inventory->{
-                    inventory.setQuantity(inventory.getQuantity()+updateOrderQnt);
+//                    inventory.setQuantity(inventory.getQuantity()+updateOrderQnt);
                     inventoryRepository.save(inventory);
                 });
             }
