@@ -2,6 +2,7 @@ package com.storehousemgm.inventory.entity;
 
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.enums.MaterialType;
+import com.storehousemgm.purchaseorder.entity.PurchaseOrder;
 import com.storehousemgm.storage.entity.Storage;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,4 +36,7 @@ public class Inventory {
 
     @ManyToOne
     private Client client;
+
+    @ManyToMany(mappedBy = "inventories")
+    private List<PurchaseOrder> purchaseOrders;
 }
