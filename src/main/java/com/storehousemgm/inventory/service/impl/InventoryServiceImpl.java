@@ -2,7 +2,9 @@ package com.storehousemgm.inventory.service.impl;
 
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.client.repository.ClientRepository;
+import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.exception.ClientNotExistException;
+import com.storehousemgm.exception.IllegalOperationException;
 import com.storehousemgm.exception.InventoryNotExistException;
 import com.storehousemgm.exception.StorageNotExistException;
 import com.storehousemgm.inventory.dto.InventoryRequest;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -49,12 +52,24 @@ public class InventoryServiceImpl implements InventoryService {
 
             double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
             double updatedStorageArea = storage.getAvailableArea() - (productSize * inventory.getQuantity());
-            storage.setAvailableArea(updatedStorageArea);
+            if (updatedStorageArea <= 0)
+                throw new IllegalOperationException("Sufficient space in storage");
+            else
+                storage.setAvailableArea(updatedStorageArea);
 
             double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * inventory.getQuantity());
-            storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+            if (updatedStorageMaxWeight <= 0)
+                throw new IllegalOperationException("Weight is too much, not support storage");
+            else
+                storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+
+            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+            List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
+            if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+                throw new IllegalOperationException("Material types are not match with storage materials");
 
             inventory.setClient(client);
+            storage.setSellerId(inventory.getSellerId());
             storage = storageRepository.save(storage);
             inventory.setStorages(List.of(storage));
 
@@ -72,6 +87,7 @@ public class InventoryServiceImpl implements InventoryService {
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
+            inventory.setRestockedAt(LocalDate.now());
 
             List<Storage> listStorages = getUpdatedStorages(inventory);
             inventory.setStorages(listStorages);
@@ -92,10 +108,21 @@ public class InventoryServiceImpl implements InventoryService {
         List<Storage> listStorages = inventory.getStorages();
         listStorages.forEach(storage -> {
             double updatedStorageArea = storage.getAvailableArea() - (productSize * qnt);
-            storage.setAvailableArea(updatedStorageArea);
+            if (updatedStorageArea <= 0)
+                throw new IllegalOperationException("Sufficient space in storage");
+            else
+                storage.setAvailableArea(updatedStorageArea);
 
             double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - maxWeight;
-            storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+            if (updatedStorageMaxWeight <= 0)
+                throw new IllegalOperationException("Weight is too much, not support storage");
+            else
+                storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+
+            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+            List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
+            if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+                throw new IllegalOperationException("Material types are not match with storage materials");
         });
         return listStorages;
     }
