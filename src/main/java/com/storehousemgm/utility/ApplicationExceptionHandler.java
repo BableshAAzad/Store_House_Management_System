@@ -23,8 +23,13 @@ public class ApplicationExceptionHandler {
 	
      @ExceptionHandler
      public  ResponseEntity<ErrorStructure<String>> handleIllegalOperation(IllegalOperationException ex){
-    	 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Already SUPER_ADMIN exist");
+    	 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Illegal Operation, Please fill proper values");
      }
+
+	 @ExceptionHandler
+	 public ResponseEntity<ErrorStructure<String>> handleSuperAdminAlreadyExist(SuperAdminAlreadyExistException ex){
+		 return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Already SUPER_ADMIN exist");
+	 }
 
 	 @ExceptionHandler
 	 public ResponseEntity<ErrorStructure<String>> handleStoreHouseNotExist(StoreHouseNotExistException ex){
