@@ -1,5 +1,6 @@
 package com.storehousemgm.inventory.entity;
 
+import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.purchaseorder.entity.PurchaseOrder;
@@ -25,7 +26,7 @@ public class Inventory {
     private double breadthInMeters;
     private double heightInMeters;
     private double weightInKg;
-    private int quantity;
+//    private int quantity;
     @Enumerated
     private List<MaterialType> materialTypes;
     private LocalDate restockedAt;
@@ -39,4 +40,7 @@ public class Inventory {
 
     @ManyToMany(mappedBy = "inventories")
     private List<PurchaseOrder> purchaseOrders;
+
+    @OneToMany(mappedBy = "inventory")
+    private List<Stock> stocks;
 }

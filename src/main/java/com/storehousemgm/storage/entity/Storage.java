@@ -1,5 +1,6 @@
 package com.storehousemgm.storage.entity;
 
+import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.storagetype.entity.StorageType;
@@ -35,4 +36,7 @@ public class Storage {
 
     @ManyToOne
     private StorageType storageType;
+
+    @OneToMany(mappedBy = "storage")
+    private List<Stock> stocks;
 }

@@ -1,6 +1,7 @@
 package com.storehousemgm.inventory.dto;
 
 import com.storehousemgm.enums.MaterialType;
+import com.storehousemgm.stock.dto.StockResponse;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -14,12 +15,13 @@ import java.util.List;
 public class InventoryResponse {
     private Long inventoryId;
     private String productTitle;
-    private Double lengthInMeters;
-    private Double breadthInMeters;
-    private Double heightInMeters;
-    private Double weightInKg;
-    private Integer quantity;
+    private double lengthInMeters;
+    private double breadthInMeters;
+    private double heightInMeters;
+    private double weightInKg;
+//    private int quantity;
     private List<MaterialType> materialTypes;
     private LocalDate restockedAt;
     private Long sellerId;
+    private List<StockResponse> stocks;
 }
