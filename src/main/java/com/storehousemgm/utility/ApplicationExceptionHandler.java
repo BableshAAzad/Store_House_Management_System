@@ -81,6 +81,11 @@ public class ApplicationExceptionHandler {
 		return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "Client is not exist");
 	}
 
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>>  handlePurchaseOrderNotExist(PurchaseOrderNotExistException ex){
+		return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "PurchaseOrder is not exist");
+	}
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(
