@@ -49,66 +49,58 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ResponseEntity<ResponseStructure<InventoryResponse>> addInventory(
-            InventoryRequest inventoryRequest, Long storageId, Long clientId) {
+            InventoryRequest inventoryRequest, Long storageId, Long clientId, int quantity) {
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new ClientNotExistException("ClientId : " + clientId + ", is not exist"));
 
-        return storageRepository.findById(storageId).map(storage -> {
-            Inventory inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, new Inventory());
-            inventory.setRestockedAt(LocalDate.now());
+        Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
+        Inventory inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, new Inventory());
+        inventory.setRestockedAt(LocalDate.now());
 
-            Optional<Stock> optionalStock = stockRepository.findByQuantity(inventoryRequest.getQuantity());
-            Stock stock;
-            if (optionalStock.isEmpty()) {
-                stock = new Stock();
-                stock.setQuantity(inventoryRequest.getQuantity());
-                stock.setStorage(storage);
-                stock = stockRepository.save(stock);
-                inventory.setStocks(List.of(stock));
-            } else {
-                stock = optionalStock.get();
-                inventory.setStocks(List.of(stock));
-            }
+        double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
+        double updatedStorageArea = storage.getAvailableArea() - (productSize * quantity);
+        if (updatedStorageArea <= 0)
+            throw new IllegalOperationException("Sufficient space in storage");
+        else
+            storage.setAvailableArea(updatedStorageArea);
 
-            double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
-            double updatedStorageArea = storage.getAvailableArea() - (productSize * inventoryRequest.getQuantity());
-            if (updatedStorageArea <= 0)
-                throw new IllegalOperationException("Sufficient space in storage");
-            else
-                storage.setAvailableArea(updatedStorageArea);
+        double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * quantity);
+        if (updatedStorageMaxWeight <= 0)
+            throw new IllegalOperationException("Weight is too much, not support storage");
+        else
+            storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * inventoryRequest.getQuantity());
-            if (updatedStorageMaxWeight <= 0)
-                throw new IllegalOperationException("Weight is too much, not support storage");
-            else
-                storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+        List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+        List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
+        if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+            throw new IllegalOperationException("Material types are not match with storage materials");
 
-            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
-            List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
-            if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
-                throw new IllegalOperationException("Material types are not match with storage materials");
+        inventory.setClient(client);
+        storage.setSellerId(inventory.getSellerId());
+        storage = storageRepository.save(storage);
+        inventory.setStorages(List.of(storage));
 
-            inventory.setClient(client);
-            storage.setSellerId(inventory.getSellerId());
-            storage = storageRepository.save(storage);
-            inventory.setStorages(List.of(storage));
+        inventory = inventoryRepository.save(inventory);
 
-            inventory = inventoryRepository.save(inventory);
+        Stock stock = new Stock();
+        stock.setQuantity(quantity);
+        stock.setStorage(storage);
+        stock.setInventory(inventory);
+        stock = stockRepository.save(stock);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
-                    .setStatus(HttpStatus.CREATED.value())
-                    .setMessage("Inventory Created")
-                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
-        }).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
+                .setStatus(HttpStatus.CREATED.value())
+                .setMessage("Inventory Created")
+                .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory, stock)));
     }
 
     //--------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
+            List<Storage> listStorages = getUpdatedStorages(inventory, inventoryRequest);
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
             inventory.setRestockedAt(LocalDate.now());
 
-            List<Storage> listStorages = getUpdatedStorages(inventory);
             inventory.setStorages(listStorages);
             inventory = inventoryRepository.save(inventory);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
@@ -118,30 +110,35 @@ public class InventoryServiceImpl implements InventoryService {
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
     }
 
-    private static List<Storage> getUpdatedStorages(Inventory inventory) {
-        double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
+    private static List<Storage> getUpdatedStorages(Inventory inventory, InventoryRequest inventoryRequest) {
+        double requestProductSize = inventoryRequest.getBreadthInMeters() * inventoryRequest.getHeightInMeters() * inventoryRequest.getLengthInMeters();
+        double existProductSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
         double qnt = inventory.getStocks().getFirst().getQuantity();
 
-        double maxWeight = inventory.getWeightInKg() * inventory.getStocks().getFirst().getQuantity();
+        double maxWeight = inventoryRequest.getWeightInKg() * qnt;
 
         List<Storage> listStorages = inventory.getStorages();
         listStorages.forEach(storage -> {
-            double updatedStorageArea = storage.getAvailableArea() - (productSize * qnt);
-            if (updatedStorageArea <= 0)
-                throw new IllegalOperationException("Sufficient space in storage");
-            else
-                storage.setAvailableArea(updatedStorageArea);
+            double updatedStorageArea = storage.getAvailableArea() - ((requestProductSize - existProductSize) * qnt);
+            if (storage.getAvailableArea() >= updatedStorageArea) {
+                if (updatedStorageArea <= 0)
+                    throw new IllegalOperationException("Sufficient space in storage");
+                else
+                    storage.setAvailableArea(updatedStorageArea);
 
-            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - maxWeight;
-            if (updatedStorageMaxWeight <= 0)
-                throw new IllegalOperationException("Weight is too much, not support storage");
-            else
-                storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+                double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - maxWeight;
+                if (storage.getMaxAdditionalWeightInKg() >= updatedStorageMaxWeight) {
+                    if (updatedStorageMaxWeight <= 0)
+                        throw new IllegalOperationException("Weight is too much, not support storage");
+                    else
+                        storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
-            List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
-            if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
-                throw new IllegalOperationException("Material types are not match with storage materials");
+                    List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+                    List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
+                    if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+                        throw new IllegalOperationException("Material types are not match with storage materials");
+                } else throw new IllegalOperationException("Your Products Maximum weight is too much");
+            } else throw new IllegalOperationException("Insufficient Available Area");
         });
         return listStorages;
     }

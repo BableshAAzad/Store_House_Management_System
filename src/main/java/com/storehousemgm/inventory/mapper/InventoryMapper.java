@@ -4,6 +4,7 @@ import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.stock.dto.StockResponse;
+import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.stock.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,9 @@ import java.util.List;
 public class InventoryMapper {
     @Autowired
     private StockMapper stockMapper;
+
+//    @Autowired
+//    private StockRepository stockRepository;
 
     public Inventory mapInventoryRequestToInventory(InventoryRequest inventoryRequest, Inventory inventory) {
         inventory.setProductTitle(inventoryRequest.getProductTitle());
@@ -27,8 +31,9 @@ public class InventoryMapper {
         return inventory;
     }
 
-    public InventoryResponse mapInventoryToInventoryResponse(Inventory inventory) {
-        List<StockResponse> listStockResponses = inventory.getStocks().stream().map(stock-> stockMapper.mapStockToStockResponse(stock)).toList();
+    public InventoryResponse mapInventoryToInventoryResponse(Inventory inventory, Stock stock) {
+//        List<StockResponse> listStockResponses = inventory.getStocks().stream().map(stock-> stockMapper.mapStockToStockResponse(stock)).toList();
+       StockResponse stockResponse = stockMapper.mapStockToStockResponse(stock);
         return InventoryResponse.builder()
                 .inventoryId(inventory.getInventoryId())
                 .productTitle(inventory.getProductTitle())
@@ -36,11 +41,24 @@ public class InventoryMapper {
                 .breadthInMeters(inventory.getBreadthInMeters())
                 .heightInMeters(inventory.getHeightInMeters())
                 .weightInKg(inventory.getWeightInKg())
-//                .quantity(inventory.getQuantity())
                 .materialTypes(inventory.getMaterialTypes())
                 .restockedAt(inventory.getRestockedAt())
                 .sellerId(inventory.getSellerId())
-                .stocks(listStockResponses)
+                .stocks(List.of(stockResponse))
+                .build();
+    }
+
+    public InventoryResponse mapInventoryToInventoryResponse(Inventory inventory) {
+        return InventoryResponse.builder()
+                .inventoryId(inventory.getInventoryId())
+                .productTitle(inventory.getProductTitle())
+                .lengthInMeters(inventory.getLengthInMeters())
+                .breadthInMeters(inventory.getBreadthInMeters())
+                .heightInMeters(inventory.getHeightInMeters())
+                .weightInKg(inventory.getWeightInKg())
+                .materialTypes(inventory.getMaterialTypes())
+                .restockedAt(inventory.getRestockedAt())
+                .sellerId(inventory.getSellerId())
                 .build();
     }
 }

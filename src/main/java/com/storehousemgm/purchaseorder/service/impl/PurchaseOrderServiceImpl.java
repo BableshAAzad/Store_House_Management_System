@@ -1,6 +1,7 @@
 package com.storehousemgm.purchaseorder.service.impl;
 
 import com.storehousemgm.exception.InventoryNotExistException;
+import com.storehousemgm.exception.PurchaseOrderNotCompletedException;
 import com.storehousemgm.exception.PurchaseOrderNotExistException;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.repository.InventoryRepository;
@@ -10,6 +11,7 @@ import com.storehousemgm.purchaseorder.entity.PurchaseOrder;
 import com.storehousemgm.purchaseorder.mapper.PurchaseOrderMapper;
 import com.storehousemgm.purchaseorder.repository.PurchaseOrderRepository;
 import com.storehousemgm.purchaseorder.service.PurchaseOrderService;
+import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,19 +40,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PurchaseOrder purchaseOrder = purchaseOrderMapper.mapPurchaseOrderRequestToPurchaseOrder(purchaseOrderRequest, new PurchaseOrder());
             purchaseOrder.setInvoiceLink(UUID.randomUUID().toString().concat(".jpg"));
 
-//            inventory.setQuantity(inventory.getQuantity() - purchaseOrder.getOrderQuantity());
-//            int temp = inventory.getStocks().getFirst().getQuantity() - purchaseOrder.getOrderQuantity();
-//            inventory.setStocks();
-            inventory = inventoryRepository.save(inventory);
+            int availableQuantity = inventory.getStocks().getFirst().getQuantity();
+            if(availableQuantity>=purchaseOrderRequest.getOrderQuantity()) {
+                int temp = availableQuantity - purchaseOrder.getOrderQuantity();
+                Stock stock = inventory.getStocks().getFirst();
+                stock.setQuantity(temp);
+                inventory.getStocks().addFirst(stock);
 
-            purchaseOrder.setInventories(List.of(inventory));
-            purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+                inventory = inventoryRepository.save(inventory);
+
+                purchaseOrder.setInventories(List.of(inventory));
+                purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+            }else {
+                throw new PurchaseOrderNotCompletedException("Please reduce quantity");
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<PurchaseOrderResponse>()
                     .setStatus(HttpStatus.CREATED.value())
                     .setMessage("PurchaseOrder Created")
                     .setData(purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)));
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
     }
+
     //--------------------------------------------------------------------------------------------------------------------
 //    note : this method is only for demo purpose
     @Override
@@ -62,15 +72,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 //         TODO note :-> this method is working only if purchase order have only one inventory
             List<Inventory> listInventories = purchaseOrder.getInventories();
-            if(newOrderQnt>oldOrderQnt){
-               int updateOrderQnt = newOrderQnt-oldOrderQnt;
-                listInventories.forEach(inventory->{
+            if (newOrderQnt > oldOrderQnt) {
+                int updateOrderQnt = newOrderQnt - oldOrderQnt;
+                listInventories.forEach(inventory -> {
 //                    inventory.setQuantity(inventory.getQuantity()-updateOrderQnt);
                     inventoryRepository.save(inventory);
                 });
-            }else{
-                int updateOrderQnt = oldOrderQnt-newOrderQnt;
-                listInventories.forEach(inventory->{
+            } else {
+                int updateOrderQnt = oldOrderQnt - newOrderQnt;
+                listInventories.forEach(inventory -> {
 //                    inventory.setQuantity(inventory.getQuantity()+updateOrderQnt);
                     inventoryRepository.save(inventory);
                 });
@@ -97,14 +107,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public ResponseEntity<ResponseStructure<List<PurchaseOrderResponse>>> findPurchaseOrders() {
-           List<PurchaseOrderResponse> listPurchaseOrders = purchaseOrderRepository.findAll()
-                   .stream()
-                   .map(purchaseOrder ->
-                    purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)).toList();
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<PurchaseOrderResponse>>()
-                    .setStatus(HttpStatus.FOUND.value())
-                    .setMessage("PurchaseOrders are Founded")
-                    .setData(listPurchaseOrders));
+        List<PurchaseOrderResponse> listPurchaseOrders = purchaseOrderRepository.findAll()
+                .stream()
+                .map(purchaseOrder ->
+                        purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)).toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<PurchaseOrderResponse>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("PurchaseOrders are Founded")
+                .setData(listPurchaseOrders));
     }
     //--------------------------------------------------------------------------------------------------------------------
 

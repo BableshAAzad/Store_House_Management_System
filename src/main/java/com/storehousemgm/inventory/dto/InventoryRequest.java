@@ -12,7 +12,7 @@ public class InventoryRequest {
     private double breadthInMeters;
     private double heightInMeters;
     private double weightInKg;
-    private int quantity;
+//    private int quantity;
     private List<MaterialType> materialTypes;
     private Long sellerId;
 }

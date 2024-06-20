@@ -22,8 +22,9 @@ public class InventoryController {
     public ResponseEntity<ResponseStructure<InventoryResponse>> addInventory(
             @Valid @RequestBody InventoryRequest inventoryRequest,
             @Valid @PathVariable Long storageId,
+            @Valid @RequestParam int quantity,
             @Valid @PathVariable Long clientId ) {
-        return inventoryService.addInventory(inventoryRequest, storageId, clientId);
+        return inventoryService.addInventory(inventoryRequest, storageId, clientId, quantity);
     }
 
     //--------------------------------------------------------------------------------------------------------------------
