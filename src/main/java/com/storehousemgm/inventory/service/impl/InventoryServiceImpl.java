@@ -115,19 +115,18 @@ public class InventoryServiceImpl implements InventoryService {
         double existProductSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
         double qnt = inventory.getStocks().getFirst().getQuantity();
 
-        double maxWeight = inventoryRequest.getWeightInKg() * qnt;
+        double reqMaxWeight = inventoryRequest.getWeightInKg() * qnt;
+        double availableMaxWeight = inventory.getWeightInKg() * qnt;
 
         List<Storage> listStorages = inventory.getStorages();
         listStorages.forEach(storage -> {
             double updatedStorageArea = storage.getAvailableArea() - ((requestProductSize - existProductSize) * qnt);
-            if (storage.getAvailableArea() >= updatedStorageArea) {
                 if (updatedStorageArea <= 0)
                     throw new IllegalOperationException("Sufficient space in storage");
                 else
                     storage.setAvailableArea(updatedStorageArea);
 
-                double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - maxWeight;
-                if (storage.getMaxAdditionalWeightInKg() >= updatedStorageMaxWeight) {
+                double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (reqMaxWeight-availableMaxWeight);
                     if (updatedStorageMaxWeight <= 0)
                         throw new IllegalOperationException("Weight is too much, not support storage");
                     else
@@ -137,8 +136,6 @@ public class InventoryServiceImpl implements InventoryService {
                     List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
                     if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
                         throw new IllegalOperationException("Material types are not match with storage materials");
-                } else throw new IllegalOperationException("Your Products Maximum weight is too much");
-            } else throw new IllegalOperationException("Insufficient Available Area");
         });
         return listStorages;
     }
