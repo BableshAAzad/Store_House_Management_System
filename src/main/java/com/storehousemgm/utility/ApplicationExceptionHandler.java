@@ -86,6 +86,11 @@ public class ApplicationExceptionHandler {
 		return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "PurchaseOrder is not exist");
 	}
 
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>>  handlePurchaseOrderNotCompleted(PurchaseOrderNotCompletedException ex){
+		return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "No Sufficient quantity");
+	}
+
      
  	@ExceptionHandler
  	public ResponseEntity<ErrorStructure<Map<String, String>>> handleMethodArgumentNotValid(

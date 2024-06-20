@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface InventoryService {
     ResponseEntity<ResponseStructure<InventoryResponse>> addInventory(
-            @Valid InventoryRequest inventoryRequest, @Valid Long storageId, @Valid Long clientId);
+            @Valid InventoryRequest inventoryRequest, @Valid Long storageId, @Valid Long clientId, @Valid int quantity);
 
     ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
             @Valid InventoryRequest inventoryRequest, @Valid Long inventoryId);
