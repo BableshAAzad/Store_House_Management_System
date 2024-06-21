@@ -24,10 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -173,40 +171,46 @@ public class InventoryServiceImpl implements InventoryService {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new StockNotExistException("StockId : " + stockId + ", is not exist"));
 
-        Storage storage = stock.getStorage();
-        Inventory inventory = stock.getInventory();
-
-        double existingArea = inventory.getLengthInMeters() * inventory.getHeightInMeters() * inventory.getBreadthInMeters();
-        double existingWeight = inventory.getWeightInKg();
-        double updatedStorageArea = 0;
-        double updatedStorageWeight = 0;
-        if (stock.getQuantity() < stockRequest.getQuantity()) {
-            updatedStorageArea = storage.getAvailableArea() - (existingArea * stockRequest.getQuantity() - existingArea * stock.getQuantity());
-            updatedStorageWeight = storage.getMaxAdditionalWeightInKg() - (existingWeight * stockRequest.getQuantity() - existingWeight * stock.getQuantity());
-        } else {
-            updatedStorageArea = storage.getAvailableArea() - (existingArea * stock.getQuantity() - existingArea * stockRequest.getQuantity());
-            updatedStorageWeight = storage.getMaxAdditionalWeightInKg() - (existingWeight * stock.getQuantity() - existingWeight * stockRequest.getQuantity());
-        }
-
-        if (updatedStorageArea < 0)
-            throw new IllegalOperationException("Insufficient space in storage");
-        else
-            storage.setAvailableArea(updatedStorageArea);
-
-
-        if (updatedStorageWeight < 0)
-            throw new IllegalOperationException("Insufficient weight in storage");
-        else
-            storage.setMaxAdditionalWeightInKg(updatedStorageWeight);
-
-        stock.setQuantity(stockRequest.getQuantity());
+        Storage storage = getUpdatedStorage(stock, stockRequest);
         storage = storageRepository.save(storage);
+        stock.setQuantity(stockRequest.getQuantity());
         stock.setStorage(storage);
         stock = stockRepository.save(stock);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StockResponse>()
                 .setStatus(HttpStatus.OK.value())
                 .setMessage("Stock Updated")
                 .setData(stockMapper.mapStockToStockResponse(stock)));
+    }
+
+    private static Storage getUpdatedStorage(Stock stock, StockRequest stockRequest) {
+        Storage storage = stock.getStorage();
+        Inventory inventory = stock.getInventory();
+
+        double existingArea = inventory.getLengthInMeters() * inventory.getHeightInMeters() * inventory.getBreadthInMeters();
+        double existingWeight = inventory.getWeightInKg();
+        double availableStorageArea = storage.getAvailableArea();
+        double availableStorageWeight = storage.getMaxAdditionalWeightInKg();
+
+        if (stock.getQuantity() < stockRequest.getQuantity()) {
+            availableStorageArea -= (existingArea * stockRequest.getQuantity() - existingArea * stock.getQuantity());
+            availableStorageWeight -= (existingWeight * stockRequest.getQuantity() - existingWeight * stock.getQuantity());
+        } else {
+            availableStorageArea += (existingArea * stock.getQuantity() - existingArea * stockRequest.getQuantity());
+            availableStorageWeight += (existingWeight * stock.getQuantity() - existingWeight * stockRequest.getQuantity());
+        }
+
+        if (availableStorageArea < 0) {
+            throw new IllegalOperationException("Insufficient space in storage");
+        } else
+            storage.setAvailableArea(availableStorageArea);
+
+
+        if (availableStorageWeight < 0)
+            throw new IllegalOperationException("Insufficient weight in storage");
+        else
+            storage.setMaxAdditionalWeightInKg(availableStorageWeight);
+
+        return storage;
     }
     //--------------------------------------------------------------------------------------------------------------------
 
