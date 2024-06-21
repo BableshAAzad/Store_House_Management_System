@@ -3,17 +3,17 @@ package com.storehousemgm.inventory.service.impl;
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.client.repository.ClientRepository;
 import com.storehousemgm.enums.MaterialType;
-import com.storehousemgm.exception.ClientNotExistException;
-import com.storehousemgm.exception.IllegalOperationException;
-import com.storehousemgm.exception.InventoryNotExistException;
-import com.storehousemgm.exception.StorageNotExistException;
+import com.storehousemgm.exception.*;
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.mapper.InventoryMapper;
 import com.storehousemgm.inventory.repository.InventoryRepository;
 import com.storehousemgm.inventory.service.InventoryService;
+import com.storehousemgm.stock.dto.StockRequest;
+import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.stock.entity.Stock;
+import com.storehousemgm.stock.mapper.StockMapper;
 import com.storehousemgm.stock.repository.StockRepository;
 import com.storehousemgm.storage.entity.Storage;
 import com.storehousemgm.storage.repository.StorageRepository;
@@ -45,6 +45,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Autowired
     private StockRepository stockRepository;
+
+    @Autowired
+    private StockMapper stockMapper;
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -58,13 +61,13 @@ public class InventoryServiceImpl implements InventoryService {
 
         double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
         double updatedStorageArea = storage.getAvailableArea() - (productSize * quantity);
-        if (updatedStorageArea <= 0)
-            throw new IllegalOperationException("Sufficient space in storage");
+        if (updatedStorageArea < 0)
+            throw new IllegalOperationException("Insufficient space in storage");
         else
             storage.setAvailableArea(updatedStorageArea);
 
         double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (inventory.getWeightInKg() * quantity);
-        if (updatedStorageMaxWeight <= 0)
+        if (updatedStorageMaxWeight < 0)
             throw new IllegalOperationException("Weight is too much, not support storage");
         else
             storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
@@ -121,21 +124,21 @@ public class InventoryServiceImpl implements InventoryService {
         List<Storage> listStorages = inventory.getStorages();
         listStorages.forEach(storage -> {
             double updatedStorageArea = storage.getAvailableArea() - ((requestProductSize - existProductSize) * qnt);
-                if (updatedStorageArea <= 0)
-                    throw new IllegalOperationException("Sufficient space in storage");
-                else
-                    storage.setAvailableArea(updatedStorageArea);
+            if (updatedStorageArea < 0)
+                throw new IllegalOperationException("Insufficient space in storage");
+            else
+                storage.setAvailableArea(updatedStorageArea);
 
-                double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (reqMaxWeight-availableMaxWeight);
-                    if (updatedStorageMaxWeight <= 0)
-                        throw new IllegalOperationException("Weight is too much, not support storage");
-                    else
-                        storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
+            double updatedStorageMaxWeight = storage.getMaxAdditionalWeightInKg() - (reqMaxWeight - availableMaxWeight);
+            if (updatedStorageMaxWeight < 0)
+                throw new IllegalOperationException("Weight is too much, not support storage");
+            else
+                storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-                    List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
-                    List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
-                    if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
-                        throw new IllegalOperationException("Material types are not match with storage materials");
+            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+            List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
+            if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+                throw new IllegalOperationException("Material types are not match with storage materials");
         });
         return listStorages;
     }
@@ -163,6 +166,47 @@ public class InventoryServiceImpl implements InventoryService {
                 .setStatus(HttpStatus.FOUND.value())
                 .setMessage("Inventories are Founded")
                 .setData(inventoryResponses));
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<StockResponse>> updateStock(StockRequest stockRequest, Long stockId) {
+        Stock stock = stockRepository.findById(stockId)
+                .orElseThrow(() -> new StockNotExistException("StockId : " + stockId + ", is not exist"));
+
+        Storage storage = stock.getStorage();
+        Inventory inventory = stock.getInventory();
+
+        double existingArea = inventory.getLengthInMeters() * inventory.getHeightInMeters() * inventory.getBreadthInMeters();
+        double existingWeight = inventory.getWeightInKg();
+        double updatedStorageArea = 0;
+        double updatedStorageWeight = 0;
+        if (stock.getQuantity() < stockRequest.getQuantity()) {
+            updatedStorageArea = storage.getAvailableArea() - (existingArea * stockRequest.getQuantity() - existingArea * stock.getQuantity());
+            updatedStorageWeight = storage.getMaxAdditionalWeightInKg() - (existingWeight * stockRequest.getQuantity() - existingWeight * stock.getQuantity());
+        } else {
+            updatedStorageArea = storage.getAvailableArea() - (existingArea * stock.getQuantity() - existingArea * stockRequest.getQuantity());
+            updatedStorageWeight = storage.getMaxAdditionalWeightInKg() - (existingWeight * stock.getQuantity() - existingWeight * stockRequest.getQuantity());
+        }
+
+        if (updatedStorageArea < 0)
+            throw new IllegalOperationException("Insufficient space in storage");
+        else
+            storage.setAvailableArea(updatedStorageArea);
+
+
+        if (updatedStorageWeight < 0)
+            throw new IllegalOperationException("Insufficient weight in storage");
+        else
+            storage.setMaxAdditionalWeightInKg(updatedStorageWeight);
+
+        stock.setQuantity(stockRequest.getQuantity());
+        storage = storageRepository.save(storage);
+        stock.setStorage(storage);
+        stock = stockRepository.save(stock);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StockResponse>()
+                .setStatus(HttpStatus.OK.value())
+                .setMessage("Stock Updated")
+                .setData(stockMapper.mapStockToStockResponse(stock)));
     }
     //--------------------------------------------------------------------------------------------------------------------
 

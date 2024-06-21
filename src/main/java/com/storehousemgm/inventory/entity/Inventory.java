@@ -26,7 +26,6 @@ public class Inventory {
     private double breadthInMeters;
     private double heightInMeters;
     private double weightInKg;
-//    private int quantity;
     @Enumerated
     private List<MaterialType> materialTypes;
     private LocalDate restockedAt;

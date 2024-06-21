@@ -2,6 +2,8 @@ package com.storehousemgm.inventory.service;
 
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
+import com.storehousemgm.stock.dto.StockRequest;
+import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,4 +20,6 @@ public interface InventoryService {
     ResponseEntity<ResponseStructure<InventoryResponse>> findInventory(@Valid Long inventoryId);
 
     ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventories();
+
+    ResponseEntity<ResponseStructure<StockResponse>> updateStock(@Valid StockRequest stockRequest, @Valid Long stockId);
 }

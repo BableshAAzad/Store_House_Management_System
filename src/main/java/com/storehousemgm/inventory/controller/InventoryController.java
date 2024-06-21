@@ -3,6 +3,8 @@ package com.storehousemgm.inventory.controller;
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
 import com.storehousemgm.inventory.service.InventoryService;
+import com.storehousemgm.stock.dto.StockRequest;
+import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +50,12 @@ public class InventoryController {
     }
 
     //--------------------------------------------------------------------------------------------------------------------
+
+    @PutMapping("/stocks/{stockId}")
+    public ResponseEntity<ResponseStructure<StockResponse>> updateStock(
+            @Valid @RequestBody StockRequest stockRequest,
+            @Valid @PathVariable Long stockId){
+        return inventoryService.updateStock(stockRequest, stockId);
+    }
 
 }
