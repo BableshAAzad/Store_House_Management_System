@@ -70,7 +70,7 @@ public class AddressController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PreAuthorize("hasAuthority('READ')")
+//    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/addresses/{addressId}")
     public ResponseEntity<ResponseStructure<AddressResponse>> findAddress(@PathVariable @Valid Long addressId) {
         return addressService.findAddress(addressId);

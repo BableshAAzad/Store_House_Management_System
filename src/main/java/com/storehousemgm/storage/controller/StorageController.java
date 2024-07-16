@@ -69,8 +69,8 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
+//    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/storages/{storageId}")
-    @PreAuthorize("hasAuthority('READ')")
     public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId){
         return  storageService.getStorage(storageId);
     }
@@ -83,8 +83,8 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
+//    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/storages")
-    @PreAuthorize("hasAuthority('READ')")
     public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
         return storageService.getStorages();
     }

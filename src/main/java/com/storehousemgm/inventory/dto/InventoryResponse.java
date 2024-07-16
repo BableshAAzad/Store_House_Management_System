@@ -22,7 +22,6 @@ public class InventoryResponse {
     private double price;
     private String description;
     private String productImage;
-//    private int quantity;
     private List<MaterialType> materialTypes;
     private LocalDate restockedAt;
     private Long sellerId;
