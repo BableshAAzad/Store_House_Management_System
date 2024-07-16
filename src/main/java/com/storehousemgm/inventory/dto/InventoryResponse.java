@@ -19,6 +19,9 @@ public class InventoryResponse {
     private double breadthInMeters;
     private double heightInMeters;
     private double weightInKg;
+    private double price;
+    private String description;
+    private String productImage;
 //    private int quantity;
     private List<MaterialType> materialTypes;
     private LocalDate restockedAt;

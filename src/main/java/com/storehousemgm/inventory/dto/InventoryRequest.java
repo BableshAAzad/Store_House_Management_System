@@ -26,6 +26,15 @@ public class InventoryRequest {
     @Min(value = 0, message = "Weight in kg must be non-negative")
     private double weightInKg;
 
+    @Min(value = 0, message = "price can not be null")
+    private double price;
+
+    @NotNull(message = "Description cannot be null")
+    @NotEmpty(message = "Description cannot be empty")
+    private String description;
+
+    private String productImage;
+
     @NotNull(message = "Material types cannot be null")
     @NotEmpty(message = "Material types cannot be empty")
     private List<MaterialType> materialTypes;

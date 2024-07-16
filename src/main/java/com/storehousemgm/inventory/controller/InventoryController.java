@@ -99,5 +99,6 @@ public class InventoryController {
             @Valid @PathVariable Long stockId){
         return inventoryService.updateStock(stockRequest, stockId);
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
 }

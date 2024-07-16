@@ -9,6 +9,7 @@ import com.storehousemgm.stock.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -25,7 +26,9 @@ public class InventoryMapper {
         inventory.setBreadthInMeters(inventoryRequest.getBreadthInMeters());
         inventory.setHeightInMeters(inventoryRequest.getHeightInMeters());
         inventory.setWeightInKg(inventoryRequest.getWeightInKg());
-//        inventory.setQuantity(inventoryRequest.getQuantity());
+        inventory.setPrice(inventoryRequest.getPrice());
+        inventory.setDescription(inventoryRequest.getDescription());
+        inventory.setProductImage(inventoryRequest.getProductImage());
         inventory.setMaterialTypes(inventoryRequest.getMaterialTypes());
         inventory.setSellerId(inventoryRequest.getSellerId());
         return inventory;
@@ -33,7 +36,7 @@ public class InventoryMapper {
 
     public InventoryResponse mapInventoryToInventoryResponse(Inventory inventory, Stock stock) {
 //        List<StockResponse> listStockResponses = inventory.getStocks().stream().map(stock-> stockMapper.mapStockToStockResponse(stock)).toList();
-       StockResponse stockResponse = stockMapper.mapStockToStockResponse(stock);
+        StockResponse stockResponse = stockMapper.mapStockToStockResponse(stock);
         return InventoryResponse.builder()
                 .inventoryId(inventory.getInventoryId())
                 .productTitle(inventory.getProductTitle())
@@ -41,6 +44,9 @@ public class InventoryMapper {
                 .breadthInMeters(inventory.getBreadthInMeters())
                 .heightInMeters(inventory.getHeightInMeters())
                 .weightInKg(inventory.getWeightInKg())
+                .price(inventory.getPrice())
+                .description(inventory.getDescription())
+                .productImage(inventory.getProductImage())
                 .materialTypes(inventory.getMaterialTypes())
                 .restockedAt(inventory.getRestockedAt())
                 .sellerId(inventory.getSellerId())
@@ -56,9 +62,25 @@ public class InventoryMapper {
                 .breadthInMeters(inventory.getBreadthInMeters())
                 .heightInMeters(inventory.getHeightInMeters())
                 .weightInKg(inventory.getWeightInKg())
+                .price(inventory.getPrice())
+                .description(inventory.getDescription())
+                .productImage(inventory.getProductImage())
                 .materialTypes(inventory.getMaterialTypes())
                 .restockedAt(inventory.getRestockedAt())
                 .sellerId(inventory.getSellerId())
+                .stocks(mapStokeToStockResponse(inventory.getStocks()))
                 .build();
+    }
+
+    private List<StockResponse> mapStokeToStockResponse(List<Stock> stocks) {
+        List<StockResponse> stockResponses = new ArrayList<>();
+        for (Stock stock : stocks) {
+            StockResponse stockResponse = StockResponse.builder()
+                    .stockId(stock.getStockId())
+                    .quantity(stock.getQuantity())
+                    .build();
+            stockResponses.add(stockResponse);
+        }
+        return stockResponses;
     }
 }
