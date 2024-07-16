@@ -1,5 +1,6 @@
 package com.storehousemgm.address.dto;
 
+import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import lombok.*;
 
 @AllArgsConstructor

@@ -21,9 +21,7 @@ public class StoreHouse {
     private String name;
 
 //    @Getter(AccessLevel.NONE)
-//    private Double totalCapacityInKg = 0.0;
     private double totalCapacityInKg;
-
 
     @OneToOne
     private Admin admin;

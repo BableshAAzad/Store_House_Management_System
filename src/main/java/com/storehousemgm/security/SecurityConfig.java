@@ -22,38 +22,41 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);
-	}
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
 
-	@Autowired
-	private ClientRepository clientRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
-	@Bean
-	@Order(2)
-	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-				.securityMatchers(matcher-> matcher.requestMatchers(
-						"/api/v1/**", "/login/**"))
-				.authorizeHttpRequests(authorize-> authorize.requestMatchers("/api/v1/register",
+    @Bean
+    @Order(2)
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .securityMatchers(matcher -> matcher.requestMatchers(
+                        "/api/v1/**", "/login/**"))
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/v1/register",
                                 "/api/v1/test/**", "/api/v1/inventories/**")
-						.permitAll()
-						.anyRequest()
-						.authenticated())
-				.formLogin(Customizer.withDefaults())
-				.build();
-	}
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .formLogin(Customizer.withDefaults())
+                .build();
+    }
 
-	@Bean
-	@Order(1)
-	SecurityFilterChain clientRequestFilterChain(HttpSecurity httpSecurity) throws Exception {
-      return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-			  .securityMatchers(matcher->matcher.requestMatchers("/api/v1/clients/**"))
-			  .authorizeHttpRequests(authorize-> authorize.anyRequest().permitAll())
-			  .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			  .addFilterBefore(new ClientApiKeyFilter(clientRepository), UsernamePasswordAuthenticationFilter.class)
-			  .build();
-	}
+    @Bean
+    @Order(1)
+    SecurityFilterChain clientRequestFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/clients/**",
+                        "/api/v1/storehouses/**",
+                        "/api/v1/storageTypes/**",
+                        "/api/v1/storages/**"))
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new ClientApiKeyFilter(clientRepository), UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 
 }

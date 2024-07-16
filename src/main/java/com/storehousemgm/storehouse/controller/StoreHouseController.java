@@ -67,7 +67,7 @@ public class StoreHouseController {
 							@Content(schema = @Schema(oneOf = ErrorStructure.class))
 					})
 			})
-	@PreAuthorize("hasAuthority('READ')")
+//	@PreAuthorize("hasAuthority('READ')")
 	@GetMapping("/storehouses/{storeHouseId}")
 	public ResponseEntity<ResponseStructure<StoreHouseResponse>> findStoreHouse(
 			@PathVariable @Valid Long storeHouseId){
@@ -97,7 +97,7 @@ public class StoreHouseController {
 							@Content(schema = @Schema(oneOf = ErrorStructure.class))
 					})
 			})
-	@PreAuthorize("hasAuthority('READ')")
+//	@PreAuthorize("hasAuthority('READ')")
 	@GetMapping("/storehouses")
 	public ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses(){
 		return storeHouseService.findStoreHouses();
