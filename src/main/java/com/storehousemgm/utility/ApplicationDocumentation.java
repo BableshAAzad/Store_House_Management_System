@@ -16,10 +16,10 @@ public class ApplicationDocumentation {
                 .title("StoreHouse_Management_System")
                 .version("v1")
                 .description(
-                        "Spring boot project built using **RESTful** Architecture covers all the `basic CRUD opterations`\n"
+                        "Spring boot project built using **RESTful** Architecture covers all the `basic CRUD operations`\n"
                                 +"#### Features : \n"
                                 + "- Covers all CRUD operations\n"
                                 + "- Performed field validations\n"
-                                + "- used DTOs to controll inbound and outbound data\n"));
+                                + "- used DTOs to control inbound and outbound data\n"));
     }
 }

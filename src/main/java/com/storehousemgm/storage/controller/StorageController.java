@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Storage Endpoints", description = "Contains all the endpoints that are related to the Storage entity")
 public class StorageController {
 
     @Autowired
     private StorageService storageService;
+
     //--------------------------------------------------------------------------------------------------------------------
 
     @Operation(description = "The endpoint is used to add the Storage data to the database",
@@ -32,13 +35,14 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PostMapping("/storehouses/{storeHouseId}/storages")
+    @PostMapping("/storehouses/{storeHouseId}/storageTypes/{storageTypeId}/storages")
     @PreAuthorize("hasAuthority('CREATE_STORAGE')")
     public ResponseEntity<ResponseStructure<String>> addStorage(
             @RequestBody @Valid StorageRequest storageRequest,
             @PathVariable @Valid Long storeHouseId,
-            @RequestParam("no_of_storage_units") Integer noOfStorageUnits){
-      return storageService.addStorage(storageRequest, storeHouseId, noOfStorageUnits);
+            @PathVariable @Valid Long storageTypeId,
+            @RequestParam("no_of_storage_units") int noOfStorageUnits){
+      return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -84,6 +88,8 @@ public class StorageController {
     public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
         return storageService.getStorages();
     }
+
+
     //--------------------------------------------------------------------------------------------------------------------
 
 }

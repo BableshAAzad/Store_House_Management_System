@@ -1,8 +1,6 @@
 package com.storehousemgm.address.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 
 @Getter
@@ -27,8 +25,10 @@ public class AddressRequest {
     private String country;
 
     @NotNull(message = "Pincode is mandatory")
-//    @Pattern(regexp = "^[0-9]*$", message = "Pincode contains only number")
-    private Integer pincode;
+//    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Pincode contains six digits only")
+    @Min(value = 100000, message = "Pincode must be at least 100000")
+    @Max(value = 999999, message = "Pincode must be at most 999999")
+    private int pincode;
 
     @NotNull(message = "Longitude can not be null")
     @NotBlank(message = "Longitude can not be blank")

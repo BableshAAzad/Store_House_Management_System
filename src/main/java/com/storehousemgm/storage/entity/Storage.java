@@ -1,6 +1,9 @@
 package com.storehousemgm.storage.entity;
 
+import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.enums.MaterialType;
+import com.storehousemgm.inventory.entity.Inventory;
+import com.storehousemgm.storagetype.entity.StorageType;
 import com.storehousemgm.storehouse.entity.StoreHouse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,14 +22,21 @@ public class Storage {
     private Long storageId;
     private String blockName;
     private String section;
-    private Double capacityInWeight;
-    private Double lengthInMeters;
-    private Double breadthInMeters;
-    private Double heightInMeters;
     @Enumerated
     private List<MaterialType> materialTypes;
-    private Double maxAdditionalWeightInKg;
-    private Double availableArea;
+    private double maxAdditionalWeightInKg;
+    private double availableArea;
+    private Long sellerId;
+
     @ManyToOne
     private StoreHouse storeHouse;
+
+    @ManyToMany(mappedBy = "storages")
+    private List<Inventory> inventories;
+
+    @ManyToOne
+    private StorageType storageType;
+
+    @OneToMany(mappedBy = "storage")
+    private List<Stock> stocks;
 }

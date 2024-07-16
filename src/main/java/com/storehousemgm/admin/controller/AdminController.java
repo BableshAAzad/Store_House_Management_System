@@ -77,6 +77,7 @@ public class AdminController {
 							@Content(schema = @Schema(oneOf = ErrorStructure.class))
 					})
 			})
+	@PreAuthorize("hasAuthority('UPDATE_ADMIN')")
     @PutMapping("/admins")
 	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(
 			@RequestBody @Valid AdminRequest adminRequest) {

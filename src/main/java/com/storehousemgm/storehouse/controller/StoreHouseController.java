@@ -103,4 +103,10 @@ public class StoreHouseController {
 		return storeHouseService.findStoreHouses();
 	}
 
+//--------------------------------------------------------------------------------------------------------------------
+
+	@GetMapping("/test")
+	public String test(){
+		return "Hello Bablesh";
+	}
 }

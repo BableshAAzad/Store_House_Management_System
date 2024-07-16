@@ -16,7 +16,7 @@ import com.storehousemgm.enums.AdminType;
 import com.storehousemgm.admin.mapper.AdminMapper;
 import com.storehousemgm.admin.repository.AdminRepository;
 import com.storehousemgm.admin.service.AdminService;
-import com.storehousemgm.exception.IllegalOperationException;
+import com.storehousemgm.exception.SuperAdminAlreadyExistException;
 import com.storehousemgm.exception.StoreHouseNotExistException;
 import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> addSuperAdmin(@Valid AdminRequest adminRequest) {
         if (adminRepository.existsByAdminType(AdminType.SUPER_ADMIN))
-            throw new IllegalOperationException("Super admin already exist");
+            throw new SuperAdminAlreadyExistException("Super admin already exist");
         Admin admin = adminMapper.mapAdminRequestToAdmin(adminRequest, new Admin());
         admin.setAdminType(AdminType.SUPER_ADMIN);
 //		admin.setPrivileges(AdminType.SUPER_ADMIN.getPrivileges());

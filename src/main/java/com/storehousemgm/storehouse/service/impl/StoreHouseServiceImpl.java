@@ -1,5 +1,6 @@
 package com.storehousemgm.storehouse.service.impl;
 
+import com.storehousemgm.address.repository.AddressRepository;
 import com.storehousemgm.admin.entity.Admin;
 import com.storehousemgm.admin.repository.AdminRepository;
 import com.storehousemgm.exception.StoreHouseNotExistException;
@@ -18,6 +19,7 @@ import com.storehousemgm.utility.ResponseStructure;
 
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,6 +34,8 @@ public class StoreHouseServiceImpl implements StoreHouseService {
     @Autowired
     private AdminRepository adminRepository;
 
+//--------------------------------------------------------------------------------------------------------------------
+
     @Override
     public ResponseEntity<ResponseStructure<StoreHouseResponse>> addStoreHouse(
             @Valid StoreHouseRequest storeHouseRequest) {
@@ -42,6 +46,7 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                 .setMessage("Store House Created")
                 .setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(savedStoreHouse)));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<StoreHouseResponse>> updateStoreHouse(
@@ -55,6 +60,7 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                     .setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(savedStoreHouse)));
         }).orElseThrow(() -> new StoreHouseNotExistException("StoreHouse Not Exist in id : " + storeHouseId));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<StoreHouseResponse>> findStoreHouse(Long storeHouseId) {
@@ -65,6 +71,7 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                     .setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(storeHouse)));
         }).orElseThrow(() -> new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not present in database"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<StoreHouseResponse>> deleteStoreHouse(Long storeHouseId) {
@@ -79,6 +86,7 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                     .setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(storeHouse)));
         }).orElseThrow(() -> new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not exist"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<List<StoreHouseResponse>>> findStoreHouses() {
@@ -91,4 +99,6 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                 .setMessage("StoreHouses Founded")
                 .setData(storeHouses));
     }
+//--------------------------------------------------------------------------------------------------------------------
+
 }
