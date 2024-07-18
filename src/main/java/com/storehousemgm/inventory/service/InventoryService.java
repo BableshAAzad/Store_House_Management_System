@@ -22,4 +22,6 @@ public interface InventoryService {
     ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventories();
 
     ResponseEntity<ResponseStructure<StockResponse>> updateStock(@Valid StockRequest stockRequest, @Valid Long stockId);
+
+    ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventoriesBySellerId(Long sellerId);
 }

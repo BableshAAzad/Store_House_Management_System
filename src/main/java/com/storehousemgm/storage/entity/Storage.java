@@ -22,7 +22,7 @@ public class Storage {
     private Long storageId;
     private String blockName;
     private String section;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private List<MaterialType> materialTypes;
     private double maxAdditionalWeightInKg;
     private double availableArea;

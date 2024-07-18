@@ -116,4 +116,33 @@ public class StorageServiceImpl implements StorageService {
                 .setMessage("Storages Founded")
                 .setData(listStorages));
     }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesBySellerId(Long sellerId) {
+        List<StorageResponse> listStorages = storageRepository
+                .findBySellerId(sellerId)
+                .stream()
+                .map(storageMapper::mapStorageToStorageResponse)
+                .toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("Seller Storages are Founded")
+                .setData(listStorages));
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesByStoreHouseId(Long storeHouseId) {
+        StoreHouse storeHouse = storeHouseRepository.findById(storeHouseId).orElseThrow(() -> new StoreHouseNotExistException("StoreHouseId : " + storeHouseId + ", is not exists"));
+        List<StorageResponse> listStorages = storageRepository
+                .findByStoreHouse(storeHouse)
+                .stream()
+                .map(storageMapper::mapStorageToStorageResponse)
+                .toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("Storages are Founded")
+                .setData(listStorages));
+    }
 }

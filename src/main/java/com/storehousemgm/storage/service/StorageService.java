@@ -22,4 +22,7 @@ public interface StorageService {
 
     ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages();
 
+    ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesBySellerId(Long sellerId);
+
+    ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesByStoreHouseId(Long storeHouseId);
 }

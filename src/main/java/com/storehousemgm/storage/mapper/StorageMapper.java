@@ -21,6 +21,8 @@ public class StorageMapper {
                 .materialTypes(storage.getMaterialTypes())
                 .maxAdditionalWeightInKg(storage.getMaxAdditionalWeightInKg())
                 .availableArea(storage.getAvailableArea())
+                .storeHouseId(storage.getStoreHouse().getStoreHouseId())
+                .sellerId(storage.getSellerId())
                 .build();
     }
 }

@@ -165,6 +165,22 @@ public class InventoryServiceImpl implements InventoryService {
                 .setMessage("Inventories are Founded")
                 .setData(inventoryResponses));
     }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventoriesBySellerId(Long sellerId) {
+        List<InventoryResponse> inventoryResponses = inventoryRepository
+                .findBySellerId(sellerId)
+                .stream()
+                .map(inventory -> inventoryMapper.mapInventoryToInventoryResponse(inventory))
+                .toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<InventoryResponse>>()
+                .setStatus(HttpStatus.FOUND.value())
+                .setMessage("Inventories are Founded")
+                .setData(inventoryResponses));
+    }
+
+    //--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<StockResponse>> updateStock(StockRequest stockRequest, Long stockId) {
@@ -181,6 +197,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .setMessage("Stock Updated")
                 .setData(stockMapper.mapStockToStockResponse(stock)));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     private static Storage getUpdatedStorage(Stock stock, StockRequest stockRequest) {
         Storage storage = stock.getStorage();
