@@ -51,7 +51,7 @@ public class InventoryController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PutMapping("/inventories/{inventoryId}")
+    @PutMapping("/clients/inventories/{inventoryId}")
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
             @Valid @RequestBody InventoryRequest inventoryRequest,
             @Valid @PathVariable Long inventoryId) {
@@ -85,7 +85,12 @@ public class InventoryController {
     }
 
     //--------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/inventories/sellers/{sellerId}")
+    public ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventoriesBySellerId(@PathVariable Long sellerId){
+        return inventoryService.findInventoriesBySellerId(sellerId);
+    }
 
+    //--------------------------------------------------------------------------------------------------------------------
     @Operation(description = "The endpoint is used to update the Stock data to the database",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Stock updated"),

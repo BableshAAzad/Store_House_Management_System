@@ -41,8 +41,8 @@ public class StorageController {
             @RequestBody @Valid StorageRequest storageRequest,
             @PathVariable @Valid Long storeHouseId,
             @PathVariable @Valid Long storageTypeId,
-            @RequestParam("no_of_storage_units") int noOfStorageUnits){
-      return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
+            @RequestParam("no_of_storage_units") int noOfStorageUnits) {
+        return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ public class StorageController {
     @PreAuthorize("hasAuthority('UPDATE_STORAGE')")
     public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             @RequestBody @Valid StorageRequest storageRequest,
-            @PathVariable @Valid Long storageId){
+            @PathVariable @Valid Long storageId) {
         return storageService.updateStorage(storageRequest, storageId);
     }
     //--------------------------------------------------------------------------------------------------------------------
@@ -70,9 +70,9 @@ public class StorageController {
                     })
             })
 //    @PreAuthorize("hasAuthority('READ')")
-    @GetMapping("/storages/{storageId}")
-    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId){
-        return  storageService.getStorage(storageId);
+    @GetMapping("/clients/storages/{storageId}")
+    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId) {
+        return storageService.getStorage(storageId);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -84,12 +84,20 @@ public class StorageController {
                     })
             })
 //    @PreAuthorize("hasAuthority('READ')")
-    @GetMapping("/storages")
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
+    @GetMapping("/clients/storages")
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages() {
         return storageService.getStorages();
     }
 
 
     //--------------------------------------------------------------------------------------------------------------------
-
+    @GetMapping("/clients/storages/sellers/{sellerId}")
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesBySellerId(@PathVariable Long sellerId) {
+        return storageService.getStoragesBySellerId(sellerId);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/clients/storageHouses/{storeHouseId}/storages")
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesByStoreHouseId(@PathVariable Long storeHouseId) {
+        return storageService.getStoragesByStoreHouseId(storeHouseId);
+    }
 }

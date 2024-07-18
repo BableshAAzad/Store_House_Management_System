@@ -49,10 +49,7 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain clientRequestFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/clients/**",
-                        "/api/v1/storehouses/**",
-                        "/api/v1/storageTypes/**",
-                        "/api/v1/storages/**"))
+                .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/clients/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new ClientApiKeyFilter(clientRepository), UsernamePasswordAuthenticationFilter.class)

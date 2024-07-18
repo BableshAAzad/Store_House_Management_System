@@ -21,4 +21,6 @@ public interface AddressService {
     ResponseEntity<ResponseStructure<List<AddressResponse>>> addresses();
 
     ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesAddress(@Valid String city);
+
+    ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesWithAddressForClient(@Valid Long clientId);
 }
