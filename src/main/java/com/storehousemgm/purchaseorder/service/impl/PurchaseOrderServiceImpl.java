@@ -3,21 +3,24 @@ package com.storehousemgm.purchaseorder.service.impl;
 import com.storehousemgm.exception.InventoryNotExistException;
 import com.storehousemgm.exception.PurchaseOrderNotCompletedException;
 import com.storehousemgm.exception.PurchaseOrderNotExistException;
+import com.storehousemgm.exception.StockNotExistException;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.repository.InventoryRepository;
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderRequest;
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderResponse;
+import com.storehousemgm.purchaseorder.dto.OrderRequestDto;
+import com.storehousemgm.purchaseorder.dto.OrderResponseDto;
 import com.storehousemgm.purchaseorder.entity.PurchaseOrder;
 import com.storehousemgm.purchaseorder.mapper.PurchaseOrderMapper;
 import com.storehousemgm.purchaseorder.repository.PurchaseOrderRepository;
 import com.storehousemgm.purchaseorder.service.PurchaseOrderService;
 import com.storehousemgm.stock.entity.Stock;
+import com.storehousemgm.stock.repository.StockRepository;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,96 +28,76 @@ import java.util.UUID;
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Autowired
     private PurchaseOrderRepository purchaseOrderRepository;
-
     @Autowired
     private InventoryRepository inventoryRepository;
-
     @Autowired
     private PurchaseOrderMapper purchaseOrderMapper;
+    @Autowired
+    private StockRepository stockRepository;
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> addPurchaseOrder(
-            PurchaseOrderRequest purchaseOrderRequest, Long inventoryId) {
-        return inventoryRepository.findById(inventoryId).map(inventory -> {
-            PurchaseOrder purchaseOrder = purchaseOrderMapper.mapPurchaseOrderRequestToPurchaseOrder(purchaseOrderRequest, new PurchaseOrder());
-            purchaseOrder.setInvoiceLink(UUID.randomUUID().toString().concat(".jpg"));
-
-            int availableQuantity = inventory.getStocks().getFirst().getQuantity();
-            if(availableQuantity>=purchaseOrderRequest.getOrderQuantity()) {
-                int temp = availableQuantity - purchaseOrder.getOrderQuantity();
-                Stock stock = inventory.getStocks().getFirst();
-                stock.setQuantity(temp);
-                inventory.getStocks().addFirst(stock);
-
-                inventory = inventoryRepository.save(inventory);
-
-                purchaseOrder.setInventories(List.of(inventory));
-                purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
-            }else {
-                throw new PurchaseOrderNotCompletedException("Please reduce quantity");
-            }
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<PurchaseOrderResponse>()
-                    .setStatus(HttpStatus.CREATED.value())
-                    .setMessage("PurchaseOrder Created")
-                    .setData(purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)));
-        }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
-    }
-
-    //--------------------------------------------------------------------------------------------------------------------
-//    note : this method is only for demo purpose
-    @Override
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> updatePurchaseOrder(
-            PurchaseOrderRequest purchaseOrderRequest, Long orderId) {
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(Long orderId) {
         return purchaseOrderRepository.findById(orderId).map(purchaseOrder -> {
-            int oldOrderQnt = purchaseOrder.getOrderQuantity();
-            int newOrderQnt = purchaseOrderRequest.getOrderQuantity();
-
-//         TODO note :-> this method is working only if purchase order have only one inventory
-            List<Inventory> listInventories = purchaseOrder.getInventories();
-            if (newOrderQnt > oldOrderQnt) {
-                int updateOrderQnt = newOrderQnt - oldOrderQnt;
-                listInventories.forEach(inventory -> {
-//                    inventory.setQuantity(inventory.getQuantity()-updateOrderQnt);
-                    inventoryRepository.save(inventory);
-                });
-            } else {
-                int updateOrderQnt = oldOrderQnt - newOrderQnt;
-                listInventories.forEach(inventory -> {
-//                    inventory.setQuantity(inventory.getQuantity()+updateOrderQnt);
-                    inventoryRepository.save(inventory);
-                });
-            }
-            purchaseOrder = purchaseOrderMapper.mapPurchaseOrderRequestToPurchaseOrder(purchaseOrderRequest, purchaseOrder);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PurchaseOrderResponse>()
-                    .setStatus(HttpStatus.OK.value())
-                    .setMessage("PurchaseOrder Updated")
-                    .setData(purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)));
-        }).orElseThrow(() -> new PurchaseOrderNotExistException("OrderId : " + orderId + ", is not exist"));
-    }
-    //--------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> findPurchaseOrder(Long orderId) {
-        return purchaseOrderRepository.findById(orderId).map(purchaseOrder -> {
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<PurchaseOrderResponse>()
+            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<OrderResponseDto>()
                     .setStatus(HttpStatus.FOUND.value())
                     .setMessage("PurchaseOrder Founded")
-                    .setData(purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)));
+                    .setData(purchaseOrderMapper.mapPurchaseOrderToOrderResponse(purchaseOrder)));
         }).orElseThrow(() -> new PurchaseOrderNotExistException("OrderId : " + orderId + ", is not exist"));
     }
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<List<PurchaseOrderResponse>>> findPurchaseOrders() {
-        List<PurchaseOrderResponse> listPurchaseOrders = purchaseOrderRepository.findAll()
+    public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(Long customerId) {
+        List<OrderResponseDto> listPurchaseOrders = purchaseOrderRepository
+                .findByCustomerId(customerId)
                 .stream()
-                .map(purchaseOrder ->
-                        purchaseOrderMapper.mapPurchaseOrderToPurchaseOrderResponse(purchaseOrder)).toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<PurchaseOrderResponse>>()
+                .map(purchaseOrder -> purchaseOrderMapper.mapPurchaseOrderToOrderResponse(purchaseOrder))
+                .toList();
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<OrderResponseDto>>()
                 .setStatus(HttpStatus.FOUND.value())
                 .setMessage("PurchaseOrders are Founded")
                 .setData(listPurchaseOrders));
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            OrderRequestDto orderRequestDto, Long inventoryId) {
+        Inventory inventory = inventoryRepository
+                .findById(inventoryId)
+                .orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
+        Stock stock = stockRepository
+                .findByInventory(inventory)
+                .orElseThrow(() -> new StockNotExistException("Stock not exist...!!!"));
+
+        PurchaseOrder purchaseOrder = null;
+        if (stock.getQuantity() >= orderRequestDto.getTotalQuantity()) {
+
+            stock.setQuantity(stock.getQuantity() - orderRequestDto.getTotalQuantity());
+            stockRepository.save(stock);
+
+            purchaseOrder = PurchaseOrder.builder()
+                    .orderId(orderRequestDto.getOrderId())
+                    .invoiceLink(UUID.randomUUID().toString().concat(".jpg"))
+                    .orderQuantity(orderRequestDto.getTotalQuantity())
+                    .customerId(orderRequestDto.getCustomerId())
+                    .invoiceDate(LocalDate.now())
+                    .inventories(List.of(inventory))
+                    .build();
+            purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+        } else {
+            throw new PurchaseOrderNotCompletedException("Insufficient Order quantities");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<OrderResponseDto>()
+                .setStatus(HttpStatus.CREATED.value())
+                .setMessage("PurchaseOrder Created")
+                .setData(OrderResponseDto.builder()
+                        .orderId(purchaseOrder.getOrderId())
+                        .inventoryTitle(inventory.getProductTitle())
+                        .inventoryImage(inventory.getProductImage())
+                        .invoiceLink(purchaseOrder.getInvoiceLink())
+                        .invoiceDate(purchaseOrder.getInvoiceDate())
+                        .build()));
     }
     //--------------------------------------------------------------------------------------------------------------------
 

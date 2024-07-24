@@ -1,7 +1,7 @@
 package com.storehousemgm.purchaseorder.controller;
 
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderRequest;
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderResponse;
+import com.storehousemgm.purchaseorder.dto.OrderRequestDto;
+import com.storehousemgm.purchaseorder.dto.OrderResponseDto;
 import com.storehousemgm.purchaseorder.service.PurchaseOrderService;
 import com.storehousemgm.utility.ErrorStructure;
 import com.storehousemgm.utility.ResponseStructure;
@@ -23,6 +23,7 @@ import java.util.List;
 public class PurchaseOrderController {
     @Autowired
     private PurchaseOrderService purchaseOrderService;
+
     //--------------------------------------------------------------------------------------------------------------------
 
     @Operation(description = "The endpoint is used to add the Client data to the database",
@@ -32,28 +33,14 @@ public class PurchaseOrderController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PostMapping("/inventories/{inventoryId}/purchaseOrders")
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> addPurchaseOrder(
-            @Valid @RequestBody PurchaseOrderRequest purchaseOrderRequest,
+    @PostMapping("/clients/inventories/{inventoryId}/purchase-orders")
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            @Valid @RequestBody OrderRequestDto orderRequestDto,
             @Valid @PathVariable Long inventoryId) {
-        return purchaseOrderService.addPurchaseOrder(purchaseOrderRequest, inventoryId);
+        return purchaseOrderService.generatePurchaseOrder(orderRequestDto, inventoryId);
     }
-    //--------------------------------------------------------------------------------------------------------------------
 
-//    note : this method is only for demo purpose
-@Operation(description = "The endpoint is used to update the PurchaseOrder data to the database",
-        responses = {
-                @ApiResponse(responseCode = "200", description = "PurchaseOrder updated"),
-                @ApiResponse(responseCode = "404", description = "Invalid Id", content = {
-                        @Content(schema = @Schema(oneOf = ErrorStructure.class))
-                })
-        })
-    @PutMapping("/purchaseOrders/{orderId}")
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> updatePurchaseOrder(
-            @Valid @RequestBody PurchaseOrderRequest purchaseOrderRequest,
-            @Valid @PathVariable Long orderId) {
-        return purchaseOrderService.updatePurchaseOrder(purchaseOrderRequest, orderId);
-    }
+
     //--------------------------------------------------------------------------------------------------------------------
 
     @Operation(description = "The endpoint is used to find the PurchaseOrder data to the database",
@@ -63,8 +50,8 @@ public class PurchaseOrderController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @GetMapping("/purchaseOrders/{orderId}")
-    public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> findPurchaseOrder(@Valid @PathVariable Long orderId){
+    @GetMapping("/clients/purchaseOrders/{orderId}")
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(@Valid @PathVariable Long orderId) {
         return purchaseOrderService.findPurchaseOrder(orderId);
     }
     //--------------------------------------------------------------------------------------------------------------------
@@ -76,9 +63,10 @@ public class PurchaseOrderController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @GetMapping("/purchaseOrders")
-    public ResponseEntity<ResponseStructure<List<PurchaseOrderResponse>>> findPurchaseOrders(){
-        return purchaseOrderService.findPurchaseOrders();
+    @GetMapping("/clients/purchase-orders/customers/{customerId}")
+    public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(
+           @PathVariable Long customerId) {
+        return purchaseOrderService.findPurchaseOrders(customerId);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
