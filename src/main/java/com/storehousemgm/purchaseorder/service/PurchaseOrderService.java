@@ -6,6 +6,8 @@ import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public interface PurchaseOrderService {
@@ -14,5 +16,8 @@ public interface PurchaseOrderService {
 
     ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(Long customerId);
 
-    ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long inventoryId);
+    ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            OrderRequestDto orderRequestDto, Long inventoryId) throws IOException;
+
+    byte[] getPdfData(Long orderId);
 }

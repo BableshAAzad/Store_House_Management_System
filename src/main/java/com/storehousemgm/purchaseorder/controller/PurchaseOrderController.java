@@ -12,9 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -36,8 +40,18 @@ public class PurchaseOrderController {
     @PostMapping("/clients/inventories/{inventoryId}/purchase-orders")
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
             @Valid @RequestBody OrderRequestDto orderRequestDto,
-            @Valid @PathVariable Long inventoryId) {
+            @Valid @PathVariable Long inventoryId) throws IOException {
         return purchaseOrderService.generatePurchaseOrder(orderRequestDto, inventoryId);
+    }
+
+    //--------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/clients/purchase-orders/invoice/{orderId}")
+    public ResponseEntity<byte[]> getOrderInvoice(@PathVariable Long orderId) {
+        byte[] pdfData = purchaseOrderService.getPdfData(orderId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("inline", "invoice_" + orderId + ".pdf");
+        return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
     }
 
 
