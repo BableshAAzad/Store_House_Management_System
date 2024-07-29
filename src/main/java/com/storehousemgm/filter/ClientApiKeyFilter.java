@@ -28,7 +28,7 @@ public class ClientApiKeyFilter extends OncePerRequestFilter {
         if (request.getSession(false) != null)
             throw new IllegalOperationException("Please logout first....!!!");
 
-        if (!request.getRequestURI().equals("/api/v1/client/register")) {
+        if (!request.getRequestURI().equals("/api/v1/clients/register")) {
             String apiKey = request.getHeader("API-KEY");
             String username = request.getHeader("USERNAME");
 

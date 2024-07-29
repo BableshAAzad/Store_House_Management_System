@@ -14,7 +14,6 @@ import com.storehousemgm.purchaseorder.entity.OrderInvoice;
 import com.storehousemgm.purchaseorder.dto.OrderRequestDto;
 import com.storehousemgm.purchaseorder.dto.OrderResponseDto;
 import com.storehousemgm.purchaseorder.entity.PurchaseOrder;
-import com.storehousemgm.purchaseorder.headerfooter.HeaderFooterPageEvent;
 import com.storehousemgm.purchaseorder.mapper.PurchaseOrderMapper;
 import com.storehousemgm.purchaseorder.repository.OrderInvoiceRepository;
 import com.storehousemgm.purchaseorder.repository.PurchaseOrderRepository;
@@ -78,7 +77,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
         Stock stock = stockRepository
                 .findByInventory(inventory)
-                .orElseThrow(() -> new StockNotExistException("Stock not exist...!!!"));
+                .orElseThrow(() -> new StockNotExistException("Out of Stocks not exist...!!!"));
 
         PurchaseOrder purchaseOrder = null;
         if (stock.getQuantity() >= orderRequestDto.getTotalQuantity()) {
@@ -87,7 +86,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             stockRepository.save(stock);
 
             // Generate the PDF and save it
-            byte[] pdfData = createPdf(orderRequestDto);
+            byte[] pdfData = createPdf(orderRequestDto, inventory.getInventoryId(), inventory.getPrice());
 
             purchaseOrder = PurchaseOrder.builder()
                     .orderId(orderRequestDto.getOrderId())
@@ -129,14 +128,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     //--------------------------------------------------------------------------------------------------------------------
-    public byte[] createPdf(OrderRequestDto orderRequestDto) throws DocumentException, IOException {
+    public byte[] createPdf(OrderRequestDto orderRequestDto, Long inventoryId, double inventoryPrice) throws DocumentException, IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document();
         PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
 
-//        HeaderFooterPageEvent event = new HeaderFooterPageEvent();
-//        writer.setPageEvent(event);
         document.open();
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25);
         Paragraph titleParagraph = new Paragraph("Ecommerce Shopping Application", titleFont);
@@ -145,39 +142,37 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         document.add(titleParagraph);
 
         // Create a table for invoice details
-        PdfPTable table = new PdfPTable(2); // 2 columns
-
+        PdfPTable table = new PdfPTable(2); // 2 column
         // Table headers
         PdfPCell cell = new PdfPCell(new Phrase("Invoice Details"));
         cell.setColspan(2);
         cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
         table.addCell(cell);
 
-        // Order Id
         table.addCell("Order Id:");
         table.addCell(String.valueOf(orderRequestDto.getOrderId()));
 
-        // Customer Id
         table.addCell("Customer Id:");
         table.addCell(String.valueOf(orderRequestDto.getCustomerId()));
 
-        // Total Quantity
+        table.addCell("Product Id :");
+        table.addCell(String.valueOf(inventoryId));
+
+        table.addCell("Product Price:");
+        table.addCell(String.valueOf(inventoryPrice));
+
         table.addCell("Total Quantity:");
         table.addCell(String.valueOf(orderRequestDto.getTotalQuantity()));
 
-        // Total Price
         table.addCell("Total Price:");
         table.addCell(String.valueOf(orderRequestDto.getTotalPrice()));
 
-        // Discount Price
         table.addCell("Discount Price:");
         table.addCell(String.valueOf(orderRequestDto.getDiscountPrice()));
 
-        // Total Payable Amount
         table.addCell("Total Payable Amount:");
         table.addCell(String.valueOf(orderRequestDto.getTotalPayableAmount()));
 
-        // Address
         table.addCell("Address:");
         table.addCell(
                 "Street: " + orderRequestDto.getAddressDto().getStreetAddress() + "\n" +
@@ -187,61 +182,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                         "Country: " + orderRequestDto.getAddressDto().getCountry() + "\n" +
                         "Pincode: " + orderRequestDto.getAddressDto().getPincode()
         );
-
-        // Contact Numbers
         table.addCell("Primary Contact:");
         table.addCell(orderRequestDto.getAddressDto().getContactNumber1());
 
         table.addCell("Secondary Contact:");
         table.addCell(orderRequestDto.getAddressDto().getContactNumber2());
-
         // Add the table to the document
         document.add(table);
         document.close();
         return byteArrayOutputStream.toByteArray();
     }
-
-
-//        String title = "Ecommerce Shopping Application";
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        Document document = new Document();
-//        PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
-//
-//        HeaderFooterPageEvent event = new HeaderFooterPageEvent();
-//        writer.setPageEvent(event);
-//        document.open();
-//
-//        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25);
-//        Paragraph titleParagraph = new Paragraph(title, titleFont);
-//        document.add(titleParagraph);
-//
-//        Font paraFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
-//        Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-//
-//        document.add(new Paragraph("Order Id : " + orderRequestDto.getOrderId(), paraFont));
-//        document.add(new Paragraph("Customer Id : " + orderRequestDto.getCustomerId(), paraFont));
-//        document.add(new Paragraph("Total Quantity : " + orderRequestDto.getTotalQuantity(), paraFont));
-//        document.add(new Paragraph("Total Price : " + orderRequestDto.getTotalPrice(), paraFont));
-//        document.add(new Paragraph("Discount Price : " + orderRequestDto.getDiscountPrice(), paraFont));
-//        document.add(new Paragraph("Total Payable Amount = " + orderRequestDto.getTotalPayableAmount(), boldFont));
-//
-//        document.add(new Paragraph("Address : ", boldFont));
-//        document.add(new Paragraph(
-//                ", Street : " + orderRequestDto.getAddressDto().getStreetAddress() +
-//                        ", Area : " + orderRequestDto.getAddressDto().getStreetAddressAdditional() +
-//                        ", City : " + orderRequestDto.getAddressDto().getCity() +
-//                        ", State : " + orderRequestDto.getAddressDto().getState() +
-//                        ", Country : " + orderRequestDto.getAddressDto().getCountry() +
-//                        ", Pincode : " + orderRequestDto.getAddressDto().getPincode(), paraFont));
-//
-//        document.add(new Paragraph("Primary Contact : " +
-//                orderRequestDto.getAddressDto().getContactNumber1(), boldFont));
-//        document.add(new Paragraph("Secondary Contact : " +
-//                orderRequestDto.getAddressDto().getContactNumber2(), paraFont));
-//
-//        document.close();
-//        return byteArrayOutputStream.toByteArray();
-//}
 
 
 }
