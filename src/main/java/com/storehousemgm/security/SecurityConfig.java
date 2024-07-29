@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
+
+
                 .formLogin(Customizer.withDefaults())
                 .build();
     }
