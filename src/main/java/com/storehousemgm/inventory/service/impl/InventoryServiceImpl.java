@@ -6,10 +6,12 @@ import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.exception.*;
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
+import com.storehousemgm.inventory.dto.InventorySearchCriteria;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.mapper.InventoryMapper;
 import com.storehousemgm.inventory.repository.InventoryRepository;
 import com.storehousemgm.inventory.service.InventoryService;
+import com.storehousemgm.inventory.specification.InventorySpecification;
 import com.storehousemgm.stock.dto.StockRequest;
 import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.stock.entity.Stock;
@@ -19,6 +21,7 @@ import com.storehousemgm.storage.entity.Storage;
 import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,24 +29,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
     @Autowired
     private InventoryMapper inventoryMapper;
-
     @Autowired
     private InventoryRepository inventoryRepository;
-
     @Autowired
     private StorageRepository storageRepository;
-
     @Autowired
     private ClientRepository clientRepository;
-
     @Autowired
     private StockRepository stockRepository;
-
     @Autowired
     private StockMapper stockMapper;
     //--------------------------------------------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ public class InventoryServiceImpl implements InventoryService {
         else
             storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-        List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+        Set<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
         List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
         if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
             throw new IllegalOperationException("Material types are not match with storage materials");
@@ -133,7 +132,7 @@ public class InventoryServiceImpl implements InventoryService {
             else
                 storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+            Set<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
             List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
             if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
                 throw new IllegalOperationException("Material types are not match with storage materials");
@@ -229,6 +228,37 @@ public class InventoryServiceImpl implements InventoryService {
 
         return storage;
     }
+
+    //--------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<List<InventoryResponse>>>
+    filterInventories(InventorySearchCriteria searchCriteria) {
+        List<Inventory> inventories = inventoryRepository.findAll(InventorySpecification.getSpecification(searchCriteria));
+        List<InventoryResponse> responseInventories = inventories.stream()
+                .map(inventory -> inventoryMapper.mapInventoryToInventoryResponse(inventory))
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<InventoryResponse>>()
+                .setStatus(HttpStatus.OK.value())
+                .setMessage(inventories.size() + " inventories are founded")
+                .setData(responseInventories));
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<InventoryResponse>>> searchInventories(String decodedCriteria) {
+        Specification<Inventory> spec = InventorySpecification.hasSearchCriteria(decodedCriteria);
+        List<Inventory> inventories = inventoryRepository.findAll(spec);
+
+        List<InventoryResponse> responseInventories = inventories.stream()
+                .map(inventory -> inventoryMapper.mapInventoryToInventoryResponse(inventory))
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<InventoryResponse>>()
+                .setStatus(HttpStatus.OK.value())
+                .setMessage(inventories.size() + " inventories are founded")
+                .setData(responseInventories));
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
     //--------------------------------------------------------------------------------------------------------------------
 
 }

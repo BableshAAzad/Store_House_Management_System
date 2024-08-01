@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class InventoryResponse {
     private double price;
     private String description;
     private String productImage;
-    private List<MaterialType> materialTypes;
+    private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
     private Long sellerId;
     private List<StockResponse> stocks;

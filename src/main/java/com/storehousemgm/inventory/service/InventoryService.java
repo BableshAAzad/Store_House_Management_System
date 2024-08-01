@@ -2,6 +2,7 @@ package com.storehousemgm.inventory.service;
 
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
+import com.storehousemgm.inventory.dto.InventorySearchCriteria;
 import com.storehousemgm.stock.dto.StockRequest;
 import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.utility.ResponseStructure;
@@ -24,4 +25,8 @@ public interface InventoryService {
     ResponseEntity<ResponseStructure<StockResponse>> updateStock(@Valid StockRequest stockRequest, @Valid Long stockId);
 
     ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventoriesBySellerId(Long sellerId);
+
+    ResponseEntity<ResponseStructure<List<InventoryResponse>>> filterInventories(InventorySearchCriteria searchCriteria);
+
+    ResponseEntity<ResponseStructure<List<InventoryResponse>>> searchInventories(String decodedCriteria);
 }
