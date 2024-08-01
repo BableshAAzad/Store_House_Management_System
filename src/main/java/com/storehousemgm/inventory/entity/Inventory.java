@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,7 +31,7 @@ public class Inventory {
     private String description;
     private String productImage;
     @Enumerated
-    private List<MaterialType> materialTypes;
+    private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
     private Long sellerId;
 
