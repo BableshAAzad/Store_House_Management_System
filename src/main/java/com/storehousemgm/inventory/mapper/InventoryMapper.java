@@ -21,6 +21,7 @@ public class InventoryMapper {
 //    private StockRepository stockRepository;
 
     public Inventory mapInventoryRequestToInventory(InventoryRequest inventoryRequest, Inventory inventory) {
+        inventory.setInventoryId(inventoryRequest.getProductId());
         inventory.setProductTitle(inventoryRequest.getProductTitle());
         inventory.setLengthInMeters(inventoryRequest.getLengthInMeters());
         inventory.setBreadthInMeters(inventoryRequest.getBreadthInMeters());
@@ -49,6 +50,7 @@ public class InventoryMapper {
                 .productImage(inventory.getProductImage())
                 .materialTypes(inventory.getMaterialTypes())
                 .restockedAt(inventory.getRestockedAt())
+                .updatedInventoryAt(inventory.getUpdatedInventoryAt())
                 .sellerId(inventory.getSellerId())
                 .stocks(List.of(stockResponse))
                 .build();
@@ -67,6 +69,7 @@ public class InventoryMapper {
                 .productImage(inventory.getProductImage())
                 .materialTypes(inventory.getMaterialTypes())
                 .restockedAt(inventory.getRestockedAt())
+                .updatedInventoryAt(inventory.getUpdatedInventoryAt())
                 .sellerId(inventory.getSellerId())
                 .stocks(mapStokeToStockResponse(inventory.getStocks()))
                 .build();

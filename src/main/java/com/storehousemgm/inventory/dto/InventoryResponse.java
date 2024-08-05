@@ -25,6 +25,7 @@ public class InventoryResponse {
     private String productImage;
     private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
+    private LocalDate updatedInventoryAt;
     private Long sellerId;
     private List<StockResponse> stocks;
 }
