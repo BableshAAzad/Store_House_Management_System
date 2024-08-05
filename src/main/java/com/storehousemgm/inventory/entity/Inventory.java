@@ -20,7 +20,6 @@ import java.util.Set;
 @Builder
 public class Inventory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inventoryId;
     private String productTitle;
     private double lengthInMeters;
@@ -33,6 +32,7 @@ public class Inventory {
     @Enumerated
     private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
+    private LocalDate updatedInventoryAt;
     private Long sellerId;
 
     @ManyToMany

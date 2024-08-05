@@ -156,14 +156,17 @@ public class InventoryServiceImpl implements InventoryService {
                 .setMessage("Inventory Created")
                 .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory, stock)));
     }
+
     //--------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
             List<Storage> listStorages = getUpdatedStorages(inventory, inventoryRequest);
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
-            inventory.setRestockedAt(LocalDate.now());
-
+            if (inventoryRequest.getMaterialTypes().isEmpty()) {
+                inventory.setMaterialTypes(inventory.getMaterialTypes());
+            }
+            inventory.setUpdatedInventoryAt(LocalDate.now());
             inventory.setStorages(listStorages);
             inventory = inventoryRepository.save(inventory);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
@@ -172,6 +175,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     private static List<Storage> getUpdatedStorages(Inventory inventory, InventoryRequest inventoryRequest) {
         double requestProductSize = inventoryRequest.getBreadthInMeters() * inventoryRequest.getHeightInMeters() * inventoryRequest.getLengthInMeters();

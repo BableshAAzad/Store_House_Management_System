@@ -9,6 +9,9 @@ import java.util.Set;
 @Getter
 public class InventoryRequest {
 
+    @NotNull(message = "Product id cannot be null")
+    private Long productId;
+
     @NotNull(message = "Product title cannot be null")
     @NotBlank(message = "Product title cannot be blank")
     @Size(max = 255, message = "Product title must be less than or equal to 255 characters")
