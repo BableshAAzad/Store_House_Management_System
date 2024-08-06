@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -165,6 +166,9 @@ public class InventoryServiceImpl implements InventoryService {
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
             if (inventoryRequest.getMaterialTypes().isEmpty()) {
                 inventory.setMaterialTypes(inventory.getMaterialTypes());
+            } else {
+                Set<MaterialType> newMaterialType = new HashSet<>(inventoryRequest.getMaterialTypes());
+                inventory.setMaterialTypes(newMaterialType);
             }
             inventory.setUpdatedInventoryAt(LocalDate.now());
             inventory.setStorages(listStorages);
