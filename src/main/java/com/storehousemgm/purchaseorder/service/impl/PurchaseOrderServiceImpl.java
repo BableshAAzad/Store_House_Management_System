@@ -71,7 +71,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequestDto orderRequestDto, Long inventoryId) throws IOException {
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            OrderRequestDto orderRequestDto,
+            Long inventoryId) throws IOException {
+
         Inventory inventory = inventoryRepository
                 .findById(inventoryId)
                 .orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
