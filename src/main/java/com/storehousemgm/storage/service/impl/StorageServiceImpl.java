@@ -15,6 +15,12 @@ import com.storehousemgm.storehouse.entity.StoreHouse;
 import com.storehousemgm.storehouse.repository.StoreHouseRepository;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,15 +32,24 @@ import java.util.List;
 public class StorageServiceImpl implements StorageService {
     @Autowired
     private StorageMapper storageMapper;
-
     @Autowired
     private StoreHouseRepository storeHouseRepository;
-
     @Autowired
     private StorageRepository storageRepository;
-
     @Autowired
     private StorageTypeRepository storageTypeRepository;
+
+
+    private PagedModel.PageMetadata getPageMetadata(Page<?> page) {
+        return new PagedModel.PageMetadata(
+                page.getSize(),
+                page.getNumber(),
+                page.getTotalElements()
+        );
+    }
+    private <T> PagedModel<T> getPagedModel(Page<T> page) {
+        return PagedModel.of(page.getContent(), getPageMetadata(page));
+    }
 
     //--------------------------------------------------------------------------------------------------------------------
     @Override
@@ -96,8 +111,8 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(Long storageId) {
         return storageRepository.findById(storageId).map(storage->{
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<StorageResponse>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StorageResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Storage Founded")
                     .setData(storageMapper.mapStorageToStorageResponse(storage)));
         }).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
@@ -111,38 +126,43 @@ public class StorageServiceImpl implements StorageService {
                 .stream()
                 .map(storageMapper::mapStorageToStorageResponse)
                 .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<StorageResponse>>()
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("Storages Founded")
                 .setData(listStorages));
     }
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesBySellerId(Long sellerId) {
-        List<StorageResponse> listStorages = storageRepository
-                .findBySellerId(sellerId)
-                .stream()
-                .map(storageMapper::mapStorageToStorageResponse)
-                .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesBySellerId(
+            Long sellerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Storage> storagePage  = storageRepository.findBySellerId(sellerId, pageable);
+
+        Page<StorageResponse> storageResponsePage = storagePage.map(storageMapper::mapStorageToStorageResponse);
+        PagedModel<StorageResponse> pagedModel = getPagedModel(storageResponsePage);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<StorageResponse>>()
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("Seller Storages are Founded")
-                .setData(listStorages));
+                .setData(pagedModel));
     }
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStoragesByStoreHouseId(Long storeHouseId) {
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesByStoreHouseId(
+            Long storeHouseId, int page, int size) {
         StoreHouse storeHouse = storeHouseRepository.findById(storeHouseId).orElseThrow(() -> new StoreHouseNotExistException("StoreHouseId : " + storeHouseId + ", is not exists"));
-        List<StorageResponse> listStorages = storageRepository
-                .findByStoreHouse(storeHouse)
-                .stream()
-                .map(storageMapper::mapStorageToStorageResponse)
-                .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Storage> storagePage  = storageRepository.findByStoreHouse(storeHouse, pageable);
+
+        Page<StorageResponse> storageResponsePage = storagePage.map(storageMapper::mapStorageToStorageResponse);
+        PagedModel<StorageResponse> pagedModel = getPagedModel(storageResponsePage);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<StorageResponse>>()
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("Storages are Founded")
-                .setData(listStorages));
+                .setData(pagedModel));
     }
 }

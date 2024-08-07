@@ -5,6 +5,7 @@ import com.storehousemgm.address.dto.AddressResponse;
 import com.storehousemgm.storehouse.dto.StoreHouseResponse;
 import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -20,7 +21,9 @@ public interface AddressService {
 
     ResponseEntity<ResponseStructure<List<AddressResponse>>> addresses();
 
-    ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesAddress(@Valid String city);
+    ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesAddress(
+            @Valid String city, int page, int size);
 
-    ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesWithAddressForClient(@Valid Long clientId);
+    ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForClient(
+            @Valid Long clientId, int page, int size);
 }

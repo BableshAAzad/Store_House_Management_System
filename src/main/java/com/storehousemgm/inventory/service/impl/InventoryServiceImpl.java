@@ -93,7 +93,8 @@ public class InventoryServiceImpl implements InventoryService {
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> filterInventories(InventorySearchCriteria searchCriteria, int page, int size) {
+    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> filterInventories(
+            InventorySearchCriteria searchCriteria, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Specification<Inventory> spec = InventorySpecification.getSpecification(searchCriteria);
         Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
@@ -173,8 +174,8 @@ public class InventoryServiceImpl implements InventoryService {
             inventory.setUpdatedInventoryAt(LocalDate.now());
             inventory.setStorages(listStorages);
             inventory = inventoryRepository.save(inventory);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
-                    .setStatus(HttpStatus.CREATED.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<InventoryResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Inventory Updated")
                     .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
@@ -273,84 +274,12 @@ public class InventoryServiceImpl implements InventoryService {
     }
     //--------------------------------------------------------------------------------------------------------------------
 
-//    @Override
-//    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventoriesBySellerId(
-//            Long sellerId, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Inventory> inventoryPage = inventoryRepository.findBySellerId(sellerId, pageable);
-//        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
-//
-//        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-//                inventoryResponsePage.getSize(),
-//                inventoryResponsePage.getNumber(),
-//                inventoryResponsePage.getTotalElements()
-//        );
-//        PagedModel<InventoryResponse> pagedModel = PagedModel.of(inventoryResponsePage.getContent(), pageMetadata);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<InventoryResponse>>()
-//                .setStatus(HttpStatus.OK.value())
-//                .setMessage("Inventories are Found")
-//                .setData(pagedModel));
-//    }
-
     //--------------------------------------------------------------------------------------------------------------------
-//    @Override
-//    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> filterInventories(
-//            InventorySearchCriteria searchCriteria, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Inventory> inventoryPage = inventoryRepository.findAll(InventorySpecification.getSpecification(searchCriteria), pageable);
-//        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
-//
-//        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-//                inventoryResponsePage.getSize(),
-//                inventoryResponsePage.getNumber(),
-//                inventoryResponsePage.getTotalElements()
-//        );
-//        PagedModel<InventoryResponse> pagedModel = PagedModel.of(inventoryResponsePage.getContent(), pageMetadata);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<InventoryResponse>>()
-//                .setStatus(HttpStatus.OK.value())
-//                .setMessage("Inventories are Found")
-//                .setData(pagedModel));
-//    }
 
     //--------------------------------------------------------------------------------------------------------------------
 
-//    @Override
-//    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> searchInventories(
-//            String decodedCriteria, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Specification<Inventory> spec = InventorySpecification.hasSearchCriteria(decodedCriteria);
-//        Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
-//        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
-//
-//        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-//                inventoryResponsePage.getSize(),
-//                inventoryResponsePage.getNumber(),
-//                inventoryResponsePage.getTotalElements()
-//        );
-//        PagedModel<InventoryResponse> pagedModel = PagedModel.of(inventoryResponsePage.getContent(), pageMetadata);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<InventoryResponse>>()
-//                .setStatus(HttpStatus.OK.value())
-//                .setMessage("Inventories are Found")
-//                .setData(pagedModel));
-//    }
     //--------------------------------------------------------------------------------------------------------------------
-//    @Override
-//    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventories(int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Inventory> inventoryPage = inventoryRepository.findAll(pageable);
-//        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
-//
-//        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-//                inventoryResponsePage.getSize(),
-//                inventoryResponsePage.getNumber(),
-//                inventoryResponsePage.getTotalElements()
-//        );
-//        PagedModel<InventoryResponse> pagedModel = PagedModel.of(inventoryResponsePage.getContent(), pageMetadata);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<InventoryResponse>>()
-//                .setStatus(HttpStatus.OK.value())
-//                .setMessage("Inventories are Found")
-//                .setData(pagedModel));
-//    }
+
     //--------------------------------------------------------------------------------------------------------------------
 
 }
