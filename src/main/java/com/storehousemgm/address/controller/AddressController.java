@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +73,8 @@ public class AddressController {
             })
 //    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/addresses/{addressId}")
-    public ResponseEntity<ResponseStructure<AddressResponse>> findAddress(@PathVariable @Valid Long addressId) {
+    public ResponseEntity<ResponseStructure<AddressResponse>> findAddress(
+            @PathVariable @Valid Long addressId) {
         return addressService.findAddress(addressId);
     }
 
@@ -98,9 +100,12 @@ public class AddressController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @GetMapping("/client/cities/{city}/storehouses")
-    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHouseByCityForClient(@PathVariable @Valid String city){
-        return addressService.findStoreHousesAddress(city);
+    @GetMapping("/clients/cities/{city}/storehouses") // /client/cities/{city}/storehouses?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHouseByCityForClient(
+            @PathVariable @Valid String city,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return addressService.findStoreHousesAddress(city, page, size);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -111,9 +116,12 @@ public class AddressController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @GetMapping("/cities/{city}/storehouses")
-    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHouseByCityForAdmin(@PathVariable @Valid String city){
-        return addressService.findStoreHousesAddress(city);
+    @GetMapping("/cities/{city}/storehouses") // /cities/{city}/storehouses?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHouseByCityForAdmin(
+            @PathVariable @Valid String city,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return addressService.findStoreHousesAddress(city, page, size);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -124,9 +132,12 @@ public class AddressController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @GetMapping("/clients/{clientId}/storehouses")
-    public ResponseEntity<ResponseStructure<List<Map<String, Object>>>> findStoreHousesWithAddressForClient(@PathVariable Long clientId){
-        return addressService.findStoreHousesWithAddressForClient(clientId);
+    @GetMapping("/clients/{clientId}/storehouses") // /clients/{clientId}/storehouses?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForClient(
+            @PathVariable Long clientId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return addressService.findStoreHousesWithAddressForClient(clientId, page, size);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
