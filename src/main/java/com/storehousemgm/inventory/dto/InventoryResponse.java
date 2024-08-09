@@ -1,5 +1,6 @@
 package com.storehousemgm.inventory.dto;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.stock.dto.StockResponse;
 import lombok.*;
@@ -28,4 +29,6 @@ public class InventoryResponse {
     private LocalDate updatedInventoryAt;
     private Long sellerId;
     private List<StockResponse> stocks;
+    private double discount;
+    private DiscountType discountType;
 }

@@ -1,5 +1,6 @@
 package com.storehousemgm.inventory.dto;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.enums.MaterialType;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -44,4 +45,7 @@ public class InventoryRequest {
 
     @NotNull(message = "Seller ID cannot be null")
     private Long sellerId;
+
+    private double discount;
+    private DiscountType discountType;
 }

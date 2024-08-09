@@ -17,9 +17,6 @@ public class InventoryMapper {
     @Autowired
     private StockMapper stockMapper;
 
-//    @Autowired
-//    private StockRepository stockRepository;
-
     public Inventory mapInventoryRequestToInventory(InventoryRequest inventoryRequest, Inventory inventory) {
         inventory.setInventoryId(inventoryRequest.getProductId());
         inventory.setProductTitle(inventoryRequest.getProductTitle());
@@ -32,11 +29,12 @@ public class InventoryMapper {
         inventory.setProductImage(inventoryRequest.getProductImage());
         inventory.setMaterialTypes(inventoryRequest.getMaterialTypes());
         inventory.setSellerId(inventoryRequest.getSellerId());
+        inventory.setDiscount(inventoryRequest.getDiscount());
+        inventory.setDiscountType(inventoryRequest.getDiscountType());
         return inventory;
     }
 
     public InventoryResponse mapInventoryToInventoryResponse(Inventory inventory, Stock stock) {
-//        List<StockResponse> listStockResponses = inventory.getStocks().stream().map(stock-> stockMapper.mapStockToStockResponse(stock)).toList();
         StockResponse stockResponse = stockMapper.mapStockToStockResponse(stock);
         return InventoryResponse.builder()
                 .inventoryId(inventory.getInventoryId())
@@ -53,6 +51,8 @@ public class InventoryMapper {
                 .updatedInventoryAt(inventory.getUpdatedInventoryAt())
                 .sellerId(inventory.getSellerId())
                 .stocks(List.of(stockResponse))
+                .discount(inventory.getDiscount())
+                .discountType(inventory.getDiscountType())
                 .build();
     }
 
@@ -72,6 +72,8 @@ public class InventoryMapper {
                 .updatedInventoryAt(inventory.getUpdatedInventoryAt())
                 .sellerId(inventory.getSellerId())
                 .stocks(mapStokeToStockResponse(inventory.getStocks()))
+                .discount(inventory.getDiscount())
+                .discountType(inventory.getDiscountType())
                 .build();
     }
 

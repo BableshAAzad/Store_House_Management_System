@@ -1,5 +1,6 @@
 package com.storehousemgm.inventory.entity;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.enums.MaterialType;
@@ -34,7 +35,9 @@ public class Inventory {
     private LocalDate restockedAt;
     private LocalDate updatedInventoryAt;
     private Long sellerId;
-
+    private double discount;
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
     @ManyToMany
     private List<Storage> storages;
 
