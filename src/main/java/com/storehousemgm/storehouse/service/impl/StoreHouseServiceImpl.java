@@ -65,8 +65,8 @@ public class StoreHouseServiceImpl implements StoreHouseService {
     @Override
     public ResponseEntity<ResponseStructure<StoreHouseResponse>> findStoreHouse(Long storeHouseId) {
         return storeHouseRepository.findById(storeHouseId).map(storeHouse -> {
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<StoreHouseResponse>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StoreHouseResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("StoreHouseFounded")
                     .setData(storeHouseMapper.mapStoreHouseToStoreHouseResponse(storeHouse)));
         }).orElseThrow(() -> new StoreHouseNotExistException("StoreHouse Id : " + storeHouseId + ", is not present in database"));
@@ -95,7 +95,7 @@ public class StoreHouseServiceImpl implements StoreHouseService {
                 .map(storeHouse -> storeHouseMapper.mapStoreHouseToStoreHouseResponse(storeHouse))
                 .toList();
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<StoreHouseResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("StoreHouses Founded")
                 .setData(storeHouses));
     }

@@ -5,6 +5,7 @@ import com.storehousemgm.inventory.entity.Inventory;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -15,11 +16,11 @@ import java.util.List;
 @Builder
 public class PurchaseOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     private int orderQuantity;
     private String invoiceLink;
     private Long customerId;
+    private LocalDate invoiceDate;
 
     @ManyToMany
     private List<Inventory> inventories;

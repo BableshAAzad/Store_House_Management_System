@@ -6,10 +6,12 @@ import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.exception.*;
 import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
+import com.storehousemgm.inventory.dto.InventorySearchCriteria;
 import com.storehousemgm.inventory.entity.Inventory;
 import com.storehousemgm.inventory.mapper.InventoryMapper;
 import com.storehousemgm.inventory.repository.InventoryRepository;
 import com.storehousemgm.inventory.service.InventoryService;
+import com.storehousemgm.inventory.specification.InventorySpecification;
 import com.storehousemgm.stock.dto.StockRequest;
 import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.stock.entity.Stock;
@@ -19,33 +21,96 @@ import com.storehousemgm.storage.entity.Storage;
 import com.storehousemgm.storage.repository.StorageRepository;
 import com.storehousemgm.utility.ResponseStructure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
     @Autowired
     private InventoryMapper inventoryMapper;
-
     @Autowired
     private InventoryRepository inventoryRepository;
-
     @Autowired
     private StorageRepository storageRepository;
-
     @Autowired
     private ClientRepository clientRepository;
-
     @Autowired
     private StockRepository stockRepository;
-
     @Autowired
     private StockMapper stockMapper;
+
+    //--------------------------------------------------------------------------------------------------------------------
+
+    private PagedModel.PageMetadata getPageMetadata(Page<?> page) {
+        return new PagedModel.PageMetadata(
+                page.getSize(),
+                page.getNumber(),
+                page.getTotalElements()
+        );
+    }
+
+    private <T> PagedModel<T> getPagedModel(Page<T> page) {
+        return PagedModel.of(page.getContent(), getPageMetadata(page));
+    }
+
+    private ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> buildResponse(Page<InventoryResponse> inventoryResponsePage, String message) {
+        PagedModel<InventoryResponse> pagedModel = getPagedModel(inventoryResponsePage);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<InventoryResponse>>()
+                .setStatus(HttpStatus.OK.value())
+                .setMessage(message)
+                .setData(pagedModel));
+    }
+
+    //--------------------------------------------------------------------------------------------------------------------
+    @Override
+    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventories(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(pageable);
+        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
+        return buildResponse(inventoryResponsePage, "Inventories are Found");
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventoriesBySellerId(Long sellerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Inventory> inventoryPage = inventoryRepository.findBySellerId(sellerId, pageable);
+        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
+        return buildResponse(inventoryResponsePage, "Inventories are Found");
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> filterInventories(
+            InventorySearchCriteria searchCriteria, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<Inventory> spec = InventorySpecification.getSpecification(searchCriteria);
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
+        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
+        return buildResponse(inventoryResponsePage, "Inventories are Found");
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> searchInventories(String decodedCriteria, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<Inventory> spec = InventorySpecification.hasSearchCriteria(decodedCriteria);
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
+        Page<InventoryResponse> inventoryResponsePage = inventoryPage.map(inventoryMapper::mapInventoryToInventoryResponse);
+        return buildResponse(inventoryResponsePage, "Inventories are Found");
+    }
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -70,7 +135,7 @@ public class InventoryServiceImpl implements InventoryService {
         else
             storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-        List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+        Set<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
         List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
         if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
             throw new IllegalOperationException("Material types are not match with storage materials");
@@ -96,20 +161,41 @@ public class InventoryServiceImpl implements InventoryService {
 
     //--------------------------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
+    public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
+            InventoryRequest inventoryRequest,
+            Long inventoryId,
+            int quantity) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
             List<Storage> listStorages = getUpdatedStorages(inventory, inventoryRequest);
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
-            inventory.setRestockedAt(LocalDate.now());
-
+            if (inventoryRequest.getMaterialTypes().isEmpty()) {
+                inventory.setMaterialTypes(inventory.getMaterialTypes());
+            } else {
+                Set<MaterialType> newMaterialType = new HashSet<>(inventoryRequest.getMaterialTypes());
+                inventory.setMaterialTypes(newMaterialType);
+            }
+            inventory.setUpdatedInventoryAt(LocalDate.now());
             inventory.setStorages(listStorages);
             inventory = inventoryRepository.save(inventory);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
-                    .setStatus(HttpStatus.CREATED.value())
+
+//            Update stocks
+            List<Stock> stocks = stockRepository.findByInventory(inventory);
+            if (!stocks.isEmpty()) {
+                StockRequest stockRequest = new StockRequest();
+                stockRequest.setQuantity(quantity);
+
+                updateStock(stockRequest, stocks.getFirst().getStockId());
+            } else {
+                throw new StockNotExistException("No Stocks there...");
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<InventoryResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Inventory Updated")
                     .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     private static List<Storage> getUpdatedStorages(Inventory inventory, InventoryRequest inventoryRequest) {
         double requestProductSize = inventoryRequest.getBreadthInMeters() * inventoryRequest.getHeightInMeters() * inventoryRequest.getLengthInMeters();
@@ -133,7 +219,7 @@ public class InventoryServiceImpl implements InventoryService {
             else
                 storage.setMaxAdditionalWeightInKg(updatedStorageMaxWeight);
 
-            List<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
+            Set<MaterialType> inventoryMaterialTypes = inventory.getMaterialTypes();
             List<MaterialType> storageMaterialTypes = storage.getMaterialTypes();
             if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
                 throw new IllegalOperationException("Material types are not match with storage materials");
@@ -145,26 +231,14 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public ResponseEntity<ResponseStructure<InventoryResponse>> findInventory(Long inventoryId) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<InventoryResponse>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<InventoryResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Inventory Founded")
                     .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
         }).orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
     }
 
     //--------------------------------------------------------------------------------------------------------------------
-    @Override
-    public ResponseEntity<ResponseStructure<List<InventoryResponse>>> findInventories() {
-        List<InventoryResponse> inventoryResponses = inventoryRepository
-                .findAll()
-                .stream()
-                .map(inventory -> inventoryMapper.mapInventoryToInventoryResponse(inventory))
-                .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<InventoryResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
-                .setMessage("Inventories are Founded")
-                .setData(inventoryResponses));
-    }
 
     @Override
     public ResponseEntity<ResponseStructure<StockResponse>> updateStock(StockRequest stockRequest, Long stockId) {
@@ -181,6 +255,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .setMessage("Stock Updated")
                 .setData(stockMapper.mapStockToStockResponse(stock)));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     private static Storage getUpdatedStorage(Stock stock, StockRequest stockRequest) {
         Storage storage = stock.getStorage();
@@ -212,6 +287,14 @@ public class InventoryServiceImpl implements InventoryService {
 
         return storage;
     }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------
+
     //--------------------------------------------------------------------------------------------------------------------
 
 }

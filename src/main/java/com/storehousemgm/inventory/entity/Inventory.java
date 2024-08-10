@@ -1,5 +1,6 @@
 package com.storehousemgm.inventory.entity;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.stock.entity.Stock;
 import com.storehousemgm.client.entity.Client;
 import com.storehousemgm.enums.MaterialType;
@@ -10,6 +11,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,7 +21,6 @@ import java.util.List;
 @Builder
 public class Inventory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inventoryId;
     private String productTitle;
     private double lengthInMeters;
@@ -30,10 +31,13 @@ public class Inventory {
     private String description;
     private String productImage;
     @Enumerated
-    private List<MaterialType> materialTypes;
+    private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
+    private LocalDate updatedInventoryAt;
     private Long sellerId;
-
+    private double discount;
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
     @ManyToMany
     private List<Storage> storages;
 

@@ -1,11 +1,13 @@
 package com.storehousemgm.inventory.dto;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.enums.MaterialType;
 import com.storehousemgm.stock.dto.StockResponse;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,8 +24,11 @@ public class InventoryResponse {
     private double price;
     private String description;
     private String productImage;
-    private List<MaterialType> materialTypes;
+    private Set<MaterialType> materialTypes;
     private LocalDate restockedAt;
+    private LocalDate updatedInventoryAt;
     private Long sellerId;
     private List<StockResponse> stocks;
+    private double discount;
+    private DiscountType discountType;
 }

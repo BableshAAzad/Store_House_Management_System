@@ -4,6 +4,7 @@ import com.storehousemgm.storage.dto.StorageRequest;
 import com.storehousemgm.storage.dto.StorageResponse;
 import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -22,4 +23,9 @@ public interface StorageService {
 
     ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages();
 
+    ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesBySellerId(
+            Long sellerId, int page, int size);
+
+    ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesByStoreHouseId(
+            Long storeHouseId, int page, int size);
 }

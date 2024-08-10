@@ -18,4 +18,6 @@ public class StorageResponse {
     private List<MaterialType> materialTypes;
     private Double maxAdditionalWeightInKg;
     private Double availableArea;
+    private Long storeHouseId;
+    private Long sellerId;
 }

@@ -1,13 +1,17 @@
 package com.storehousemgm.inventory.dto;
 
+import com.storehousemgm.enums.DiscountType;
 import com.storehousemgm.enums.MaterialType;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 public class InventoryRequest {
+
+    @NotNull(message = "Product id cannot be null")
+    private Long productId;
 
     @NotNull(message = "Product title cannot be null")
     @NotBlank(message = "Product title cannot be blank")
@@ -37,8 +41,11 @@ public class InventoryRequest {
 
     @NotNull(message = "Material types cannot be null")
     @NotEmpty(message = "Material types cannot be empty")
-    private List<MaterialType> materialTypes;
+    private Set<MaterialType> materialTypes;
 
     @NotNull(message = "Seller ID cannot be null")
     private Long sellerId;
+
+    private double discount;
+    private DiscountType discountType;
 }

@@ -33,7 +33,7 @@ public class ClientController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PostMapping("/client/register")
+    @PostMapping("/clients/register")
     private ResponseEntity<ResponseStructure<ClientResponse>> addClient(@Valid @RequestBody ClientRequest clientRequest){
       return clientService.addClient(clientRequest);
     }

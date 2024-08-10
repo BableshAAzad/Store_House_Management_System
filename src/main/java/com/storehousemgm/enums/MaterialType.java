@@ -18,5 +18,6 @@ public enum MaterialType {
     COMPOSITE,
     BIODEGRADABLE,
     SYNTHETIC,
-    ORGANIC
+    ORGANIC,
+    CLOTH
 }

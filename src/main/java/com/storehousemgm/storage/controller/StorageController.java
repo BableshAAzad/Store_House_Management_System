@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,8 @@ public class StorageController {
             @RequestBody @Valid StorageRequest storageRequest,
             @PathVariable @Valid Long storeHouseId,
             @PathVariable @Valid Long storageTypeId,
-            @RequestParam("no_of_storage_units") int noOfStorageUnits){
-      return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
+            @RequestParam("no_of_storage_units") int noOfStorageUnits) {
+        return storageService.addStorage(storageRequest, storeHouseId, storageTypeId, noOfStorageUnits);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ public class StorageController {
     @PreAuthorize("hasAuthority('UPDATE_STORAGE')")
     public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(
             @RequestBody @Valid StorageRequest storageRequest,
-            @PathVariable @Valid Long storageId){
+            @PathVariable @Valid Long storageId) {
         return storageService.updateStorage(storageRequest, storageId);
     }
     //--------------------------------------------------------------------------------------------------------------------
@@ -70,9 +71,9 @@ public class StorageController {
                     })
             })
 //    @PreAuthorize("hasAuthority('READ')")
-    @GetMapping("/storages/{storageId}")
-    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId){
-        return  storageService.getStorage(storageId);
+    @GetMapping("/clients/storages/{storageId}")
+    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId) {
+        return storageService.getStorage(storageId);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -84,12 +85,28 @@ public class StorageController {
                     })
             })
 //    @PreAuthorize("hasAuthority('READ')")
-    @GetMapping("/storages")
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
+    @GetMapping("/clients/storages")
+    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages() {
         return storageService.getStorages();
     }
 
 
     //--------------------------------------------------------------------------------------------------------------------
-
+    // /clients/storages/sellers/{sellerId}?page=0&size=10
+    @GetMapping("/clients/sellers/{sellerId}/storages")
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesBySellerId(
+            @PathVariable Long sellerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return storageService.getStoragesBySellerId(sellerId, page, size);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+    // /clients/storageHouses/{storeHouseId}/storages?page=0&size=10
+    @GetMapping("/clients/storageHouses/{storeHouseId}/storages")
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesByStoreHouseId(
+            @PathVariable Long storeHouseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return storageService.getStoragesByStoreHouseId(storeHouseId,page,size);
+    }
 }

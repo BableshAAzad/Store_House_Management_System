@@ -1,23 +1,23 @@
 package com.storehousemgm.purchaseorder.service;
 
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderRequest;
-import com.storehousemgm.purchaseorder.dto.PurchaseOrderResponse;
+import com.storehousemgm.purchaseorder.dto.OrderRequestDto;
+import com.storehousemgm.purchaseorder.dto.OrderResponseDto;
 import com.storehousemgm.utility.ResponseStructure;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public interface PurchaseOrderService {
 
-    ResponseEntity<ResponseStructure<PurchaseOrderResponse>> addPurchaseOrder(
-            @Valid PurchaseOrderRequest purchaseOrderRequest, @Valid Long inventoryId);
+    ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(@Valid Long orderId);
 
-//    note : this method is only for demo purpose
-    ResponseEntity<ResponseStructure<PurchaseOrderResponse>> updatePurchaseOrder(
-            @Valid PurchaseOrderRequest purchaseOrderRequest, @Valid Long orderId);
+    ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(Long customerId);
 
-    ResponseEntity<ResponseStructure<PurchaseOrderResponse>> findPurchaseOrder(@Valid Long orderId);
+    ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
+            OrderRequestDto orderRequestDto, Long inventoryId) throws IOException;
 
-    ResponseEntity<ResponseStructure<List<PurchaseOrderResponse>>> findPurchaseOrders();
+    byte[] getPdfData(Long orderId);
 }
