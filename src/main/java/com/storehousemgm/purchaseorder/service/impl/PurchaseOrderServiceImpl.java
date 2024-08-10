@@ -69,6 +69,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .setMessage("PurchaseOrders are Founded")
                 .setData(listPurchaseOrders));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
@@ -78,9 +79,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Inventory inventory = inventoryRepository
                 .findById(inventoryId)
                 .orElseThrow(() -> new InventoryNotExistException("InventoryId : " + inventoryId + ", is not exist"));
-        Stock stock = stockRepository
-                .findByInventory(inventory)
-                .orElseThrow(() -> new StockNotExistException("Out of Stocks not exist...!!!"));
+
+        List<Stock> stocks = stockRepository.findByInventory(inventory);
+        Stock stock = stocks.getFirst();
+        if (stock == null)
+            throw new StockNotExistException("Out of Stocks not exist...!!!");
 
         PurchaseOrder purchaseOrder = null;
         if (stock.getQuantity() >= orderRequestDto.getTotalQuantity()) {
@@ -122,6 +125,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                         .invoiceDate(purchaseOrder.getInvoiceDate())
                         .build()));
     }
+    //--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public byte[] getPdfData(Long orderId) {
@@ -131,7 +135,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     //--------------------------------------------------------------------------------------------------------------------
-    public byte[] createPdf(OrderRequestDto orderRequestDto, Long inventoryId, double inventoryPrice) throws DocumentException, IOException {
+    public byte[] createPdf(OrderRequestDto orderRequestDto,
+                            Long inventoryId,
+                            double inventoryPrice) throws DocumentException, IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document();
@@ -170,10 +176,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         table.addCell("Total Price:");
         table.addCell(String.valueOf(orderRequestDto.getTotalPrice()));
 
+        table.addCell("Discount:");
+        table.addCell(orderRequestDto.getDiscount() + "%");
+
         table.addCell("Discount Price:");
         table.addCell(String.valueOf(orderRequestDto.getDiscountPrice()));
 
-        table.addCell("Total Payable Amount:");
+        table.addCell("Total Paid Amount:");
         table.addCell(String.valueOf(orderRequestDto.getTotalPayableAmount()));
 
         table.addCell("Address:");

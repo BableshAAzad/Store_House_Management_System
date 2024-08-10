@@ -16,7 +16,7 @@ public interface InventoryService {
             @Valid InventoryRequest inventoryRequest, @Valid Long storageId, @Valid Long clientId, @Valid int quantity);
 
     ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
-            @Valid InventoryRequest inventoryRequest, @Valid Long inventoryId);
+            @Valid InventoryRequest inventoryRequest, @Valid Long inventoryId, @Valid int quantity);
 
     ResponseEntity<ResponseStructure<InventoryResponse>> findInventory(@Valid Long inventoryId);
 

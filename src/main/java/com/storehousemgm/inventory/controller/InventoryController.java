@@ -54,11 +54,12 @@ public class InventoryController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-    @PutMapping("/clients/inventories/{inventoryId}")
+    @PutMapping("/clients/inventories/{inventoryId}/stocks") // /clients/inventories/{inventoryId}/stocks?quantity=5
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
             @Valid @RequestBody InventoryRequest inventoryRequest,
-            @Valid @PathVariable Long inventoryId) {
-        return inventoryService.updateInventory(inventoryRequest, inventoryId);
+            @Valid @PathVariable Long inventoryId,
+            @Valid @RequestParam int quantity) {
+        return inventoryService.updateInventory(inventoryRequest, inventoryId, quantity);
     }
 
     //--------------------------------------------------------------------------------------------------------------------

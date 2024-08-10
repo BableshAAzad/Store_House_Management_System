@@ -161,7 +161,10 @@ public class InventoryServiceImpl implements InventoryService {
 
     //--------------------------------------------------------------------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest, Long inventoryId) {
+    public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
+            InventoryRequest inventoryRequest,
+            Long inventoryId,
+            int quantity) {
         return inventoryRepository.findById(inventoryId).map(inventory -> {
             List<Storage> listStorages = getUpdatedStorages(inventory, inventoryRequest);
             inventory = inventoryMapper.mapInventoryRequestToInventory(inventoryRequest, inventory);
@@ -174,6 +177,18 @@ public class InventoryServiceImpl implements InventoryService {
             inventory.setUpdatedInventoryAt(LocalDate.now());
             inventory.setStorages(listStorages);
             inventory = inventoryRepository.save(inventory);
+
+//            Update stocks
+            List<Stock> stocks = stockRepository.findByInventory(inventory);
+            if (!stocks.isEmpty()) {
+                StockRequest stockRequest = new StockRequest();
+                stockRequest.setQuantity(quantity);
+
+                updateStock(stockRequest, stocks.getFirst().getStockId());
+            } else {
+                throw new StockNotExistException("No Stocks there...");
+            }
+
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<InventoryResponse>()
                     .setStatus(HttpStatus.OK.value())
                     .setMessage("Inventory Updated")

@@ -17,6 +17,7 @@ public class OrderRequestDto {
     @Min(value = 1, message = "Order quantity must be at least 1")
     private int totalQuantity;
     private double totalPrice;
+    private double discount;
     private double discountPrice;
     private double totalPayableAmount;
 
