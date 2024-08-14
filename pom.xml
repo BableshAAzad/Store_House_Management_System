@@ -94,10 +94,10 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <finalName>store-house-management-system</finalName>
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>store-house-management-system</finalName>
     </build>
 
 </project>

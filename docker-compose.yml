@@ -1,6 +1,27 @@
+version: '3.8'
 services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: StoreHouse_management_system
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
   app:
     build: .
     ports:
       - "8081:8081"
-    restart: always
+    environment:
+      - RDS_HOSTNAME=db
+      - RDS_PORT=3306
+      - RDS_DB_NAME=StoreHouse_management_system
+      - RDS_USERNAME=root
+      - RDS_PASSWORD=root
+    networks:
+      - app-network
+
+networks:
+  app-network:
