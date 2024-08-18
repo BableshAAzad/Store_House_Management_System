@@ -97,6 +97,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>store-house-management-system</finalName>
     </build>
 
 </project>
