@@ -46,9 +46,9 @@ jobs:
 
       - name: Deploy to cPanel
         env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER: ftp.bableshaazad.com
+          FTP_USERNAME: bableshaazad@bableshaazad.com
+          FTP_PASSWORD: AAzad@12345
           DB_HOST_NAME: ${{ secrets.DB_HOST_NAME }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
