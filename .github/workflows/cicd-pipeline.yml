@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "Deploying application to cPanel..."
           # Use lftp to mirror the build artifacts to the public_html directory
-          lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
+          lftp -u bableshaazad@bableshaazad.com,AAzad@12345 ftp.bableshaazad.com <<EOF
           mirror -R ./target /public_html/path/on/server
           quit
           EOF
