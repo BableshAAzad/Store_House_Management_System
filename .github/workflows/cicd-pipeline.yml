@@ -49,8 +49,14 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          DB_HOST_NAME: ${{ secrets.DB_HOST_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           echo "Deploying application to cPanel..."
+          # Use lftp to mirror the build artifacts to the public_html directory
           lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
           mirror -R ./target /public_html/path/on/server
           quit
