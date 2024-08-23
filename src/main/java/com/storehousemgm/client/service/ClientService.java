@@ -8,4 +8,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface ClientService {
     ResponseEntity<ResponseStructure<ClientResponse>> addClient(@Valid ClientRequest clientRequest);
+    //test commit
 }
