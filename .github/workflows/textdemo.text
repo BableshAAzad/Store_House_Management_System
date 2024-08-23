@@ -63,3 +63,4 @@ jobs:
           lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
           set ssl:verify-certificate no
 
+//test
