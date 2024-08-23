@@ -49,9 +49,9 @@ jobs:
 
       - name: Deploy to cPanel
         env:
-          FTP_SERVER: ftp.bableshaazad.com
-          FTP_USERNAME: bableshaazad@bableshaazad.com
-          FTP_PASSWORD: AAzad@12345
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           DB_HOST_NAME: ${{ secrets.DB_HOST_NAME }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -60,8 +60,6 @@ jobs:
         run: |
           echo "Deploying application to cPanel..."
           # Use lftp to mirror the build artifacts to the public_html directory
-          lftp -u bableshaazad@bableshaazad.com,AAzad@12345 ftp.bableshaazad.com <<EOF
+          lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
           set ssl:verify-certificate no
-          mirror -R ./target /public_html/path/on/server
-          quit
-          EOF
+
