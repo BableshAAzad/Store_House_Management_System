@@ -44,6 +44,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
       - name: Deploy to cPanel
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -58,6 +61,5 @@ jobs:
           echo "Deploying application to cPanel..."
           # Use lftp to mirror the build artifacts to the public_html directory
           lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
-          mirror -R ./target /public_html/path/on/server
-          quit
-          EOF
+          set ssl:verify-certificate no
+
