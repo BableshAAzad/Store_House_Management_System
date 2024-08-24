@@ -14,7 +14,8 @@ public class CorsConfig implements WebMvcConfigurer {
                         "https://ecommerce-shopping-app-bcsb.onrender.com")
                 .allowCredentials(true)
                 .allowedHeaders("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .maxAge(3600);
     }
 }
 
