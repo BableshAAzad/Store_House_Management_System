@@ -17,6 +17,7 @@ com\storehousemgm\StoreHouseManagementSystemApplication.class
 com\storehousemgm\client\dto\ClientRequest.class
 com\storehousemgm\security\UserDetailServiceImpl.class
 com\storehousemgm\admin\controller\AdminController.class
+com\storehousemgm\config\CorsConfig$1.class
 com\storehousemgm\storagetype\dto\StorageTypeRequest.class
 com\storehousemgm\purchaseorder\dto\AddressDto.class
 com\storehousemgm\stock\entity\Stock.class
