@@ -29,7 +29,9 @@ public class CorsConfig{
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:8080",
                         "https://ecommerce-shopping-app-bcsb.onrender.com",
-                                "https://www.ecommerce-shopping-app-bcsb.onrender.com")
+                                "https://www.ecommerce-shopping-app-bcsb.onrender.com",
+                                "https://ecommerce.bableshaazad.com",
+                                "https://www.ecommerce.bableshaazad.com")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(true);
