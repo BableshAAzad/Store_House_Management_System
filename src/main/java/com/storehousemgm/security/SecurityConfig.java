@@ -33,7 +33,9 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(matcher -> matcher.requestMatchers(
                         "/api/v1/**", "/login/**"))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/v1/register",
@@ -41,8 +43,6 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-
-
                 .formLogin(Customizer.withDefaults())
                 .build();
     }
@@ -50,7 +50,9 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     SecurityFilterChain clientRequestFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/clients/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
