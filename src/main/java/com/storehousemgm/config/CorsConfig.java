@@ -10,8 +10,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:8080",
-                        "https://ecommerce-shopping-app-bcsb.onrender.com")
+//                .allowedOriginPatterns("http://localhost:8080",
+//                        "https://ecommerce-shopping-app-bcsb.onrender.com")
+                .allowedOriginPatterns("*")
                 .allowCredentials(true)
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
