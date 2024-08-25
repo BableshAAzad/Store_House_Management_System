@@ -37,17 +37,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "https://www.ecommerce-shopping-app-bcsb.onrender.com",
-                                "https://*.bableshaazad.com",
-                                "https://bableshaazad.com",
+                "https://*.bableshaazad.com",
+                "https://bableshaazad.com",
                 "http://localhost:8080"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("Authorization"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -57,7 +58,7 @@ public class SecurityConfig {
     @Order(2)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(Customizer.withDefaults())
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(matcher -> matcher.requestMatchers(
                         "/api/v1/**", "/login/**"))
@@ -75,7 +76,7 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain clientRequestFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(Customizer.withDefaults())
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(matcher -> matcher.requestMatchers("/api/v1/clients/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
