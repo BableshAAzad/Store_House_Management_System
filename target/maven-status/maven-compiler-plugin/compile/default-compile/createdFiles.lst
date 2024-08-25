@@ -103,7 +103,6 @@ com\storehousemgm\exception\StorageNotExistException.class
 com\storehousemgm\exception\PurchaseOrderNotCompletedException.class
 com\storehousemgm\exception\ClientAlreadyExistException.class
 com\storehousemgm\utility\ErrorStructure.class
-com\storehousemgm\config\CorsConfig.class
 com\storehousemgm\purchaseorder\dto\OrderResponseDto.class
 com\storehousemgm\storehouse\repository\StoreHouseRepository.class
 com\storehousemgm\utility\ErrorStructure$ErrorStructureBuilder.class
