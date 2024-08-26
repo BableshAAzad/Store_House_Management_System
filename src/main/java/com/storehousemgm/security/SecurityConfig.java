@@ -21,7 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
@@ -68,7 +68,6 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
@@ -82,7 +81,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new ClientApiKeyFilter(clientRepository), UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
