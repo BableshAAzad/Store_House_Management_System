@@ -41,12 +41,18 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "https://www.ecommerce-shopping-app-bcsb.onrender.com",
-                "https://*.bableshaazad.com",
+                "https://ecommerce.bableshaazad.com",
+                "https://www.ecommerce.bableshaazad.com",
                 "https://bableshaazad.com",
                 "http://localhost:8080"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Cache-Control",
+                "Content-Type",
+                "API-KEY",
+                "USERNAME"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
