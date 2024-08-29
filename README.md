@@ -35,11 +35,11 @@
 - Download the master branch as a zip file.
 - Import the project into your IDE and ensure JDK 21 is installed.
 - Set the following environment variables: 🔐
-    1. `DB_HOST_NAME`= localhost
-    2. `DB_NAME`= store-house-management-system
-    3. `DB_PASSWORD`= root
-    4. `DB_PORT`= 3306
-    5. `DB_USERNAME`= root
+    >1. `DB_HOST_NAME`= localhost
+    >2. `DB_NAME`= store-house-management-system
+    >3. `DB_PASSWORD`= root
+    >4. `DB_PORT`= 3306
+    >5. `DB_USERNAME`= root
 - Refer to the API documentation for guidance on sending requests and handling responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe).
 - For swagger documentation `http;//localhost:8080/swagger-ui.html`
 
