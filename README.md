@@ -1,11 +1,11 @@
-## 🏪 Store House Management System [BableshAAzad.com](https://www.bableshaazad.com)
+## 🏪 Store House Management System API [BableshAAzad.com](https://www.bableshaazad.com)
 - This project is a RESTful web service built using Spring Boot.
 - It allows storing products in warehouses, which can be used by e-commerce applications. For a demo, visit [ecommerce.BableshAAzad.com](https://ecommerce.bableshaazad.com).
 - The project is based on basic warehouse management principles.
 - You can integrate this project with other e-commerce applications to simplify inventory management and tracking.
 
 **📜 API Documentation:**
-- View API requests and responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe)
+- View API postman requests and responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe)
 
 **🏠 Features:**
 - Store and manage inventories.
@@ -16,31 +16,32 @@
 
 **🧑‍💻 Technologies Used:**
 
-`Spring Boot` `Spring Security` `RESTful API` `MySQL` `OpenAPI Documentation` `Validation` `OpenPDF` `HATEOAS`
+`Spring Boot` `Spring Security` `RESTful API` `MySQL` `Spring-data-jpa` `OpenAPI Documentation` `Validation` `OpenPDF` `HATEOAS`
 
 ---
 
 **💻 How To Use:**
 
-#### 🚗 Method 1: Using Online Service
+#### 🚗<u> Method 1: Using Online Service </u>
 - You can directly access the service via [https://store-house-management-system.onrender.com](https://store-house-management-system.onrender.com).
 - Refer to the API documentation for guidance on sending requests and handling responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe).
 
-#### 🚐 Method 2: Using Docker
+#### 🚐 <u>Method 2: Using Docker </u>
 - Pull the Docker image: `bableshaazad/storehousemanagementsystem`.
 - Refer to the API documentation for guidance on sending requests and handling responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe).
 - Set the necessary environment variables as shown below 👇.
 
-#### 🚒 Method 3: Setting Up Your Own Server
+#### 🚒 <u>Method 3: Setting Up Your Own Server</u>
 - Download the master branch as a zip file.
 - Import the project into your IDE and ensure JDK 21 is installed.
-- Set the following environment variables:
+- Set the following environment variables: 🔐
     1. `DB_HOST_NAME`= localhost
     2. `DB_NAME`= store-house-management-system
     3. `DB_PASSWORD`= root
     4. `DB_PORT`= 3306
     5. `DB_USERNAME`= root
 - Refer to the API documentation for guidance on sending requests and handling responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe).
+- For swagger documentation `http;//localhost:8080/swagger-ui.html`
 
 ---
 
@@ -93,7 +94,7 @@
   }
   ```
 
-- For Client Registration http://localhost:8081/clients/register
+- For Client Registration **Endpoint** `http://localhost:8081/clients/register`
 #### Request:
 ```json
 {
