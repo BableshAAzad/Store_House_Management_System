@@ -6,7 +6,7 @@
 
 **📜 API Documentation:**
 - View API postman requests and responses: [store-house-management-system](https://documenter.getpostman.com/view/32067662/2sAXjJ7DUe)
-- View frontEnd documentation [ecommerce-shopping-app-ui](https://github.com/BableshAAzad/ecommerce_shopping_app_ui)
+- View ecommerce shopping app frontEnd documentation [ecommerce-shopping-app-ui](https://github.com/BableshAAzad/ecommerce_shopping_app_ui)
 - View ecommerce shopping app api documentation [ecommerce-shopping-app-api](https://github.com/BableshAAzad/Ecommerce_Shopping_App)
 
 **🏠 Features:**
