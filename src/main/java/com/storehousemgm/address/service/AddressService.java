@@ -26,4 +26,7 @@ public interface AddressService {
 
     ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForClient(
             @Valid Long clientId, int page, int size);
+
+    ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressAdmin(
+            int page, int size);
 }

@@ -18,7 +18,7 @@ public class InventoryMapper {
     private StockMapper stockMapper;
 
     public Inventory mapInventoryRequestToInventory(InventoryRequest inventoryRequest, Inventory inventory) {
-        inventory.setInventoryId(inventoryRequest.getProductId());
+        inventory.setInventoryId(inventoryRequest.getInventoryId());
         inventory.setProductTitle(inventoryRequest.getProductTitle());
         inventory.setLengthInMeters(inventoryRequest.getLengthInMeters());
         inventory.setBreadthInMeters(inventoryRequest.getBreadthInMeters());

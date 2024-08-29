@@ -135,7 +135,18 @@ public class AddressServiceImpl implements AddressService {
     public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForClient(
             Long clientId, int page, int size) {
         clientRepository.findById(clientId).orElseThrow(() -> new ClientNotExistException("Client Id : " + clientId + ", does not exists"));
+        return findStoreHouseWithAddress(page, size);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
 
+    @Override
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressAdmin(int page, int size) {
+        return findStoreHouseWithAddress(page, size);
+    }
+
+    //--------------------------------------------------------------------------------------------------------------------
+
+    private ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHouseWithAddress(int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         Page<Address> addressPage = addressRepository.findAll(pageable);
 
@@ -156,6 +167,4 @@ public class AddressServiceImpl implements AddressService {
                         .setMessage("StoreHouses Founded")
                         .setData(pagedModel));
     }
-
-    //--------------------------------------------------------------------------------------------------------------------
 }

@@ -5,8 +5,6 @@ import com.storehousemgm.inventory.dto.InventoryRequest;
 import com.storehousemgm.inventory.dto.InventoryResponse;
 import com.storehousemgm.inventory.dto.InventorySearchCriteria;
 import com.storehousemgm.inventory.service.InventoryService;
-import com.storehousemgm.stock.dto.StockRequest;
-import com.storehousemgm.stock.dto.StockResponse;
 import com.storehousemgm.utility.ErrorStructure;
 import com.storehousemgm.utility.ResponseStructure;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,11 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Inventory Endpoints", description = "Contains all the endpoints that are related to the Inventory entity")
+@AllArgsConstructor
 public class InventoryController {
-    @Autowired
-    private InventoryService inventoryService;
-    @Autowired
-    private ObjectMapper objectMapper;
+
+    private final InventoryService inventoryService;
+    private final ObjectMapper objectMapper;
     //--------------------------------------------------------------------------------------------------------------------
 
     @Operation(description = "The endpoint is used to add the Inventory data to the database",
@@ -98,21 +96,6 @@ public class InventoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return inventoryService.findInventoriesBySellerId(sellerId, page, size);
-    }
-
-    //--------------------------------------------------------------------------------------------------------------------
-    @Operation(description = "The endpoint is used to update the Stock data to the database",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Stock updated"),
-                    @ApiResponse(responseCode = "404", description = "Invalid Id", content = {
-                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
-                    })
-            })
-    @PutMapping("/stocks/{stockId}")
-    public ResponseEntity<ResponseStructure<StockResponse>> updateStock(
-            @Valid @RequestBody StockRequest stockRequest,
-            @Valid @PathVariable Long stockId) {
-        return inventoryService.updateStock(stockRequest, stockId);
     }
 
     //--------------------------------------------------------------------------------------------------------------------

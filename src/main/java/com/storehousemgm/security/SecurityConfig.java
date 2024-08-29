@@ -54,7 +54,6 @@ public class SecurityConfig {
                 "API-KEY",
                 "USERNAME"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -68,8 +67,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(matcher -> matcher.requestMatchers(
                         "/api/v1/**", "/login/**"))
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/v1/register",
-                                "/api/v1/test/**", "/api/v1/inventories/**")
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers(
+                        "/api/v1/register"
+                                , "/api/v1/inventories/**",
+                                "/")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

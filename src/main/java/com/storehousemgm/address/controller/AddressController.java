@@ -140,5 +140,18 @@ public class AddressController {
         return addressService.findStoreHousesWithAddressForClient(clientId, page, size);
     }
     //--------------------------------------------------------------------------------------------------------------------
-
+    @Operation(description = "The endpoint is used to find the all StoreHouses with address to the database",
+            responses = {
+                    @ApiResponse(responseCode = "302", description = "StoreHouses founded"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Input", content = {
+                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
+                    })
+            })
+    @PreAuthorize("hasAuthority('READ')")
+    @GetMapping("/storehouses-with-address") // /clients/{clientId}/storehouses?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<Map<String, Object>>>> findStoreHousesWithAddressForAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return addressService.findStoreHousesWithAddressAdmin(page, size);
+    }
 }

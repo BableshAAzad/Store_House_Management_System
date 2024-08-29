@@ -37,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private StoreHouseRepository storeHouseRepository;
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> addSuperAdmin(@Valid AdminRequest adminRequest) {
@@ -51,6 +52,7 @@ public class AdminServiceImpl implements AdminService {
                 .setMessage("Super Admin Created")
                 .setData(adminMapper.mapAdminToAdminResponse(admin)));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> addAdmin(@Valid AdminRequest adminRequest, @Valid Long storeHouseId) {
@@ -76,6 +78,7 @@ public class AdminServiceImpl implements AdminService {
             }
         }).orElseThrow(() -> new StoreHouseNotExistException("StoreHouseId : " + storeHouseId + ", is not exist"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(AdminRequest adminRequest) {
@@ -91,6 +94,7 @@ public class AdminServiceImpl implements AdminService {
                     .setData(adminMapper.mapAdminToAdminResponse(savedAdmin)));
         }).orElseThrow(() -> new AdminNotExistException("User not found in database"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> deleteAdmin(Long storeHouseId) {
@@ -109,6 +113,7 @@ public class AdminServiceImpl implements AdminService {
 			}
 		}).orElseThrow(()-> new StoreHouseNotExistException("StoreHouse not found in id : "+storeHouseId));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> updateAdminBySuperAdmin(AdminRequest adminRequest, Long adminId) {
@@ -121,16 +126,18 @@ public class AdminServiceImpl implements AdminService {
                     .setData(adminMapper.mapAdminToAdminResponse(updatedAdmin)));
         }).orElseThrow(() -> new AdminNotExistException("AdminId : " + adminId + ", is not exist"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<AdminResponse>> findAdmin(Long adminId) {
         return adminRepository.findById(adminId).map(admin -> {
-            return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<AdminResponse>()
-                    .setStatus(HttpStatus.FOUND.value())
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<AdminResponse>()
+                    .setStatus(HttpStatus.OK.value())
                     .setMessage("Admin founded")
                     .setData(adminMapper.mapAdminToAdminResponse(admin)));
         }).orElseThrow(() -> new AdminNotExistException("AdminId : " + adminId + ", is not found"));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<List<AdminResponse>>> findAdmins() {
@@ -138,10 +145,11 @@ public class AdminServiceImpl implements AdminService {
                 .findAllByAdminType(AdminType.ADMIN)
                 .stream()
                 .map(adminMapper::mapAdminToAdminResponse).toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<AdminResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<AdminResponse>>()
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("Admins Founded")
                 .setData(admins));
     }
+//--------------------------------------------------------------------------------------------------------------------
 
 }

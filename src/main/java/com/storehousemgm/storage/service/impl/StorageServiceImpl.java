@@ -120,16 +120,10 @@ public class StorageServiceImpl implements StorageService {
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages() {
-        List<StorageResponse> listStorages = storageRepository
-                .findAll()
-                .stream()
-                .map(storageMapper::mapStorageToStorageResponse)
-                .toList();
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<StorageResponse>>()
-                .setStatus(HttpStatus.OK.value())
-                .setMessage("Storages Founded")
-                .setData(listStorages));
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStorages(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Storage> storagePage = storageRepository.findAll(pageable);
+        return getStoragesAll(storagePage);
     }
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -138,15 +132,21 @@ public class StorageServiceImpl implements StorageService {
             Long sellerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Storage> storagePage  = storageRepository.findBySellerId(sellerId, pageable);
+        return getStoragesAll(storagePage);
+    }
 
+    //-------------------------------------------------------------------------------------------------------------------
+
+    private ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesAll(Page<Storage> storagePage){
         Page<StorageResponse> storageResponsePage = storagePage.map(storageMapper::mapStorageToStorageResponse);
         PagedModel<StorageResponse> pagedModel = getPagedModel(storageResponsePage);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PagedModel<StorageResponse>>()
                 .setStatus(HttpStatus.OK.value())
-                .setMessage("Seller Storages are Founded")
+                .setMessage("Storages are Founded")
                 .setData(pagedModel));
     }
+
     //--------------------------------------------------------------------------------------------------------------------
 
     @Override

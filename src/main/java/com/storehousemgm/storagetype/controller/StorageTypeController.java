@@ -24,7 +24,6 @@ public class StorageTypeController {
     @PostMapping("/storageTypes")
     public ResponseEntity<ResponseStructure<StorageTypeResponse>> addStorageType(
             @RequestBody StorageTypeRequest storageTypeRequest){
-
       return storageTypeService.addStorageType(storageTypeRequest);
     }
     //--------------------------------------------------------------------------------------------------------------------

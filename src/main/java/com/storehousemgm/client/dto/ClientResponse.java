@@ -9,4 +9,6 @@ import lombok.*;
 @Builder
 public class ClientResponse {
     private String apiKey;
+    private String username;
+    private Long clientId;
 }

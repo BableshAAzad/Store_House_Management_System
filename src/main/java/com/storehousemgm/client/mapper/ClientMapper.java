@@ -17,6 +17,8 @@ public class ClientMapper {
         return ClientResponse
                 .builder()
                 .apiKey(client.getApiKey())
+                .username(client.getEmail())
+                .clientId(client.getClientId())
                 .build();
     }
 }

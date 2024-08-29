@@ -70,9 +70,22 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-//    @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/clients/storages/{storageId}")
-    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable @Valid Long storageId) {
+    public ResponseEntity<ResponseStructure<StorageResponse>> getStorageByClient(@PathVariable @Valid Long storageId) {
+        return storageService.getStorage(storageId);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @Operation(description = "The endpoint is used to find the Storage data to the database",
+            responses = {
+                    @ApiResponse(responseCode = "302", description = "Storage founded"),
+                    @ApiResponse(responseCode = "404", description = "Invalid Input", content = {
+                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
+                    })
+            })
+    @PreAuthorize("hasAuthority('READ')")
+    @GetMapping("/storages/{storageId}")
+    public ResponseEntity<ResponseStructure<StorageResponse>> getStorageByAdmin(@PathVariable @Valid Long storageId) {
         return storageService.getStorage(storageId);
     }
     //--------------------------------------------------------------------------------------------------------------------
@@ -84,10 +97,12 @@ public class StorageController {
                             @Content(schema = @Schema(oneOf = ErrorStructure.class))
                     })
             })
-//    @PreAuthorize("hasAuthority('READ')")
-    @GetMapping("/clients/storages")
-    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages() {
-        return storageService.getStorages();
+    @PreAuthorize("hasAuthority('READ')")
+    @GetMapping("/storages") //  /storages?page=0&size=10
+    public ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStorages(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return storageService.getStorages(page, size);
     }
 
 

@@ -66,8 +66,8 @@ public class StorageTypeServiceImpl implements StorageTypeService {
     @Override
     public ResponseEntity<ResponseStructure<StorageTypeResponse>> findStorageType(Long storageTypeId) {
         return storageTypeRepository.findById(storageTypeId).map(storageType->{
-              return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<StorageTypeResponse>()
-                      .setStatus(HttpStatus.FOUND.value())
+              return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<StorageTypeResponse>()
+                      .setStatus(HttpStatus.OK.value())
                       .setMessage("StorageType Founded")
                       .setData(storageTypeMapper.mapStorageTypeToStorageTypeResponse(storageType)));
         }).orElseThrow(()->new StorageTypeNotExistException("StorageTypeId : "+storageTypeId+", storageType is not exist"));
@@ -80,8 +80,8 @@ public class StorageTypeServiceImpl implements StorageTypeService {
                 .stream()
                 .map(storageType -> storageTypeMapper.mapStorageTypeToStorageTypeResponse(storageType))
                 .toList();
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<StorageTypeResponse>>()
-                .setStatus(HttpStatus.FOUND.value())
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<StorageTypeResponse>>()
+                .setStatus(HttpStatus.OK.value())
                 .setMessage("StorageType Founded")
                 .setData(listStorageTypeResponse));
     }

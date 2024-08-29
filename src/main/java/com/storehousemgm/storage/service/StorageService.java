@@ -7,8 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 public interface StorageService {
     ResponseEntity<ResponseStructure<String>> addStorage(
             @Valid StorageRequest storageRequest,
@@ -21,7 +19,7 @@ public interface StorageService {
 
     ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@Valid Long storageId);
 
-    ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages();
+    ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStorages(int page,int size);
 
     ResponseEntity<ResponseStructure<PagedModel<StorageResponse>>> getStoragesBySellerId(
             Long sellerId, int page, int size);

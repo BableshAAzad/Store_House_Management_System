@@ -104,9 +104,4 @@ public class StoreHouseController {
 	}
 
 //--------------------------------------------------------------------------------------------------------------------
-
-	@GetMapping("/test")
-	public String test(){
-		return "Hello Bablesh";
-	}
 }

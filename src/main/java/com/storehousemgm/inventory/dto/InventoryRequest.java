@@ -11,7 +11,7 @@ import java.util.Set;
 public class InventoryRequest {
 
     @NotNull(message = "Product id cannot be null")
-    private Long productId;
+    private Long inventoryId;
 
     @NotNull(message = "Product title cannot be null")
     @NotBlank(message = "Product title cannot be blank")

@@ -22,8 +22,6 @@ public interface InventoryService {
 
     ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventories(int page, int size);
 
-    ResponseEntity<ResponseStructure<StockResponse>> updateStock(@Valid StockRequest stockRequest, @Valid Long stockId);
-
     ResponseEntity<ResponseStructure<PagedModel<InventoryResponse>>> findInventoriesBySellerId(
             Long sellerId, int page, int size);
 
