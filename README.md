@@ -1,4 +1,4 @@
-## 🏪 Store House Management System API [BableshAAzad.com](https://www.bableshaazad.com)
+## 🏪 Store House Management System API [ecommerce.BableshAAzad.com](https://ecommerce.bableshaazad.com)
 - This project is a RESTful web service built using Spring Boot.
 - It allows storing products in warehouses, which can be used by e-commerce applications. For a demo, visit [ecommerce.BableshAAzad.com](https://ecommerce.bableshaazad.com).
 - The project is based on basic warehouse management principles.
